@@ -8,10 +8,7 @@ function MoviesCard({ movieElement }) {
 
   return (
     <li className="movies-card">
-      <div
-        className="movies-card__image"
-        style={{ backgroundImage: `url(${movieElement.image})` }}
-      ></div>
+      <img className="movies-card__image" alt={movieElement.title} src={movieElement.image}/>
       <div className="movies-card__info">
         <h2 className="movies-card__title">{movieElement.title}</h2>
         <label className="movies-card__button">

@@ -4,11 +4,14 @@ import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 
 function SavedMovies() {
+  const SavedMoviesCardList = true;
+
+
   return (
     <div className="saved-movies">
       <SearchForm />
       {/* <Preloader /> */}
-      <MoviesCardList />
+      <MoviesCardList SavedMoviesCardList={SavedMoviesCardList}/>
     </div>
   );
 }

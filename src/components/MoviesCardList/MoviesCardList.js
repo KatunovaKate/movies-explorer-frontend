@@ -2,7 +2,7 @@ import "./MoviesCardList.css";
 import imageMovie from "../../images/imageMovie.png";
 import MoviesCard from "../MoviesCard/MoviesCard";
 
-function MoviesCardList() {
+function MoviesCardList(props) {
   const movies = [
     {
       title: "33 слова о дизайне",
@@ -79,13 +79,13 @@ function MoviesCardList() {
   ];
 
   return (
-    <section className="movies-list">
-      <ul className="movies-list_cards">
+    <section className={`movies-list ${props.SavedMoviesCardList ? "movies-list_saved-movies" : ""}`}>
+      <ul className="movies-list__cards">
         {movies.map((movie) => {
           return <MoviesCard key={movie._id} movieElement={movie} />;
         })}
       </ul>
-      <button className="movies-list_button">Ещё</button>
+      <button className={`movies-list__button ${props.SavedMoviesCardList ? "movies-list__button_disabled" : ""}`}>Ещё</button>
     </section>
   );
 }

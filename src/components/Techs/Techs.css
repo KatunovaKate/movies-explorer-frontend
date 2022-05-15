@@ -108,6 +108,7 @@
 @media all and (max-width: 450px) {
   .techs {
     padding: 70px 18px;
+    background-color: white;
   }
 }
 
