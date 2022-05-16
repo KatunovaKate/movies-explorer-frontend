@@ -2,10 +2,9 @@
   min-height: 560px;
   background-color: #dddee3;
   background-image: url(../../images/text__COLOR_landing-logo.svg);
-  background-size: auto 244px;
+  background-size: 722px 244px;
   background-repeat: no-repeat;
-  background-position-x: right 12.5%;
-  background-position-y: bottom 60px;
+  background-position: right 12.5% bottom 60px;
 }
 
 .promo__contauner {
@@ -26,9 +25,8 @@
 
 @media all and (max-width: 850px) {
   .promo {
-    background-size: auto 230px;
-    background-position-x: center;
-    background-position-y: bottom 70px;
+    background-size: 680px 230px;
+    background-position: center bottom 70px;
   }
 }
 
