@@ -1,0 +1,125 @@
+.profile {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 30px;
+}
+
+.profile__title {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 29px;
+  max-width: 100%;
+  text-align: center;
+  margin-top: 74px;
+  margin-bottom: 114px;
+}
+
+.profile__form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.profile__inputs {
+  min-width: 410px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile__inputs:first-child {
+  border-bottom: 1px #e8e8e8 solid;
+  margin-bottom: 9px;
+}
+
+.profile__input-title {
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 30px;
+}
+
+.profile__input {
+  border: 0;
+  height: 22px;
+  font-size: 11px;
+  line-height: 13px;
+  padding-bottom: 14px;
+  width: 85%;
+  padding-top: 4px;
+}
+
+.profile__input::placeholder {
+  text-align: right;
+}
+
+.profile__button {
+  margin-top: 200px;
+  font-size: 13px;
+  line-height: 16px;
+  width: 410px;
+  height: 16px;
+  background-color: white;
+  border: 0;
+  transition: 0.2s linear;
+  cursor: pointer;
+}
+
+.profile__button:hover {
+  opacity: 0.8;
+  transition: 0.2s linear;
+}
+
+.profile__button_type_signout {
+  margin-top: 16px;
+  text-align: center;
+  margin-bottom: 70px;
+  text-decoration: none;
+  color: #ee3465;
+}
+
+@media all and (max-width: 850px) {
+  .profile__title {
+    margin-top: 233px;
+    margin-bottom: 87px;
+  }
+}
+
+@media all and (max-width: 850px) {
+  .profile__button {
+    margin-top: 192px;
+  }
+}
+
+@media all and (max-width: 850px) {
+  .profile__button_type_signout {
+    margin-top: 16px;
+  }
+}
+
+@media all and (max-width: 630px) {
+  .profile__title {
+    margin-top: 69px;
+    margin-bottom: 72px;
+  }
+}
+
+@media all and (max-width: 630px) {
+  .profile__inputs {
+    min-width: 260px;
+  }
+}
+
+@media all and (max-width: 630px) {
+  .profile__button {
+    margin-top: 357px;
+    font-size: 12px;
+    line-height: 15px;
+  }
+}
+
+@media all and (max-width: 630px) {
+  .profile__button_type_signout {
+    margin-top: 16px;
+  }
+}

@@ -1,1 +1,2 @@
 # movies-explorer-frontend
+>>>>>>> main
