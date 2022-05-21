@@ -12,7 +12,7 @@ function SavedMovies({
   numberOfFilms,
   numberOfMovies,
   isShortFilm,
-  addMovies
+  addMovies,
 }) {
   const [showPreloader, setShowPreloader] = React.useState(false);
   const [filteredMovies, setFilteredMovies] = React.useState([]);
@@ -22,26 +22,21 @@ function SavedMovies({
   function handleSubmit(e) {
     e.preventDefault();
     setShowPreloader(true);
-    mainApi
-      .getMovies()
-      .then((films) => {
-        setMovies(films);
-        const filteredMovies = films.filter((movie) => {
-          return movie.nameRU.toLowerCase().includes(searchData);
-        });
-        if (isShortFilm) {
-          const durationCheck = filteredMovies.filter((movie) => {
-            return movie.duration < 40;
-          })
-          setFilteredMovies(durationCheck);
-          numberOfFilms(durationCheck);
-          return;
-        }
-        setFilteredMovies(filteredMovies);
-        numberOfFilms(filteredMovies);
-      })
-      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
-      .finally(setShowPreloader(false));
+    const filteredMovies = movies.filter((movie) => {
+      return movie.nameRU.toLowerCase().includes(searchData);
+    });
+    if (isShortFilm) {
+      const durationCheck = filteredMovies.filter((movie) => {
+        return movie.duration < 40;
+      });
+      setFilteredMovies(durationCheck);
+      numberOfFilms(durationCheck);
+      setShowPreloader(false);
+      return;
+    }
+    setFilteredMovies(filteredMovies);
+    numberOfFilms(filteredMovies);
+    setShowPreloader(false);
   }
 
   React.useEffect(() => {
@@ -49,6 +44,7 @@ function SavedMovies({
     Promise.all([mainApi.getMovies()])
       .then((movies) => {
         setMovies(movies[0].data);
+        setFilteredMovies(movies[0].data)
       })
       .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
       .finally(setShowPreloader(false));
@@ -61,7 +57,7 @@ function SavedMovies({
   return (
     <div className="saved-movies">
       <SearchForm
-        movies={movies}
+        movies={filteredMovies}
         onChangeSearch={onChangeSearch}
         onChangeShortFilms={onChangeShortFilms}
         onSubmit={handleSubmit}
@@ -71,7 +67,7 @@ function SavedMovies({
         <Preloader />
       ) : (
         <MoviesCardList
-          numberOfMovies={movies}
+          numberOfMovies={filteredMovies}
           savedMoviesCardList={savedMoviesCardList}
           addMovies={addMovies}
         />
