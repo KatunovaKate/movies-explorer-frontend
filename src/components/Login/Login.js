@@ -1,25 +1,51 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import logo from "../../images/logo.svg";
 
 import "./Login.css";
 
-function Login({ loggedIn }) {
+function Login({ onLogin }) {
+  const [loginData, setRegisterData] = React.useState({
+    email: "",
+    password: "",
+  });
+  const history = useHistory();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRegisterData({
+      ...loginData,
+      [name]: value,
+    });
+  };
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    onLogin(loginData).catch((err) => console.log(err));
+    pushOnMovies();
+  }
+
+  function pushOnMovies() {
+    history.push("/movies");
+  }
+
   return (
     <div className="login">
-      <NavLink onClick={loggedIn} className={"login__link-logo"} to={"/"}>
+      <NavLink className={"login__link-logo"} to={"/"}>
         <img className="login__logo" src={logo} alt="logo" />
       </NavLink>
       <h2 className="login__title">Рады видеть!</h2>
-      <form className="login__form">
-        <label className="login__input-label" for="signin-email">
+      <form className="login__form" onSubmit={handleSubmit}>
+        <label className="login__input-label" for="email">
           E-mail
         </label>
         <input
           className="login__input"
+          value={loginData.email || ""}
+          onChange={handleChange}
           type="email"
-          id="signin-email"
-          name="signin-email"
+          id="email"
+          name="email"
           required
           minLength={3}
           maxLength={30}
@@ -27,16 +53,18 @@ function Login({ loggedIn }) {
         />
         <span
           className="login__input-error signin-email-error"
-          id="signup-email-error"
+          id="email-error"
         ></span>
-        <label className="login__input-label" for="signin-password">
+        <label className="login__input-label" for="password">
           Пароль
         </label>
         <input
           className="login__input"
+          value={loginData.password || ""}
+          onChange={handleChange}
           type="password"
-          id="signin-password"
-          name="signin-password"
+          id="password"
+          name="password"
           required
           minLength={3}
           placeholder="123456"
