@@ -13,8 +13,9 @@ function Movies({
   numberOfMovies,
   isShortFilm,
   addMovies,
+  setMovies,
+  movies,
 }) {
-  const [movies, setMovies] = React.useState([]);
   const [filteredMovies, setFilteredMovies] = React.useState([]);
   const [showPreloader, setShowPreloader] = React.useState(false);
 
@@ -31,7 +32,7 @@ function Movies({
         if (isShortFilm) {
           const durationCheck = filteredMovies.filter((movie) => {
             return movie.duration < 40;
-          })
+          });
           setFilteredMovies(durationCheck);
           numberOfFilms(durationCheck);
           return;
@@ -43,12 +44,31 @@ function Movies({
       .finally(setShowPreloader(false));
   }
 
-  React.useEffect(() => {
-    numberOfFilms(filteredMovies);
-  }, []);
+  // React.useEffect(() => {
+  //   numberOfFilms(filteredMovies);
+  // }, []);
 
-  // setTimeout(numberOfFilms, 60)
-  // window.addEventListener('resize', setTimeout)
+  const debounce = (func, wait, immediate) => {
+    var timeout;
+    return () => {
+      const context = this,
+        args = arguments;
+      const later = function () {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      const callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
+
+  window.addEventListener(
+    "resize",
+    debounce(() => numberOfFilms(filteredMovies), 200, false),
+    false
+  );
 
   return (
     <div className="movies">

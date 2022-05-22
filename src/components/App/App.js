@@ -44,7 +44,6 @@ function App() {
     mainApi
       .authorize(data)
       .then((data) => {
-        console.log(data);
         setLoggedIn(true);
         localStorage.setItem("jwt", data.token);
         history.push("/movies");
@@ -84,12 +83,14 @@ function App() {
     setIsShortFilm(!isShortFilm);
   };
 
+  const [newNumber, setNewNumber] = React.useState(0);
+  const [movies, setMovies] = React.useState([]);
+
   function numberOfFilms(filteredMovies) {
     if (middleWidth.matches) {
-      const number = 8;
+      const number = 8 + newNumber;
       const numberOfMovies = filteredMovies.slice(0, number);
       setNumberOfMovies(numberOfMovies);
-      console.log(filteredMovies);
       return;
     } else if (smallWidth.matches) {
       const numberOfMovies = filteredMovies.slice(0, 5);
@@ -101,10 +102,20 @@ function App() {
   }
 
   function addMovies() {
-    // if (middleWidth.matches) {
-    //   const newNumber = number + 4;
-    //   return;
-    // }
+    if (middleWidth.matches) {
+      setNewNumber(newNumber + 2);
+      const filteredMovies = movies.slice(0, newNumber)
+      numberOfFilms(filteredMovies)
+      return;
+    } else if (smallWidth.matches) {
+      setNewNumber(newNumber + 5);
+      const filteredMovies = movies.slice(0, newNumber)
+      numberOfFilms(filteredMovies)
+      return;
+    }
+      setNewNumber(newNumber + 4);
+      const filteredMovies = movies.slice(0, newNumber)
+      numberOfFilms(filteredMovies)
   }
 
   return (
@@ -126,6 +137,8 @@ function App() {
             numberOfMovies={numberOfMovies}
             isShortFilm={isShortFilm}
             addMovies={addMovies}
+            setMovies={setMovies}
+            movies={movies}
             exact
             path="/movies"
             component={Movies}
