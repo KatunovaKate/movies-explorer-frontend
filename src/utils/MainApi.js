@@ -1,5 +1,5 @@
-export const BASE_URL = "http://localhost:3000";
-// const BASE_URL = "http://api.movies-katunova.nomoredomains.xyz";
+// export const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://api.movies-katunova.nomoredomains.xyz";
 
 const checkResponse = (response) => {
   return response.ok
