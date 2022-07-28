@@ -30,12 +30,12 @@ function SavedMovies({
         return movie.duration < 40;
       });
       setFilteredMovies(durationCheck);
-      numberOfFilms(durationCheck);
+      // numberOfFilms(durationCheck);
       setShowPreloader(false);
       return;
     }
     setFilteredMovies(filteredMovies);
-    numberOfFilms(filteredMovies);
+    // numberOfFilms(filteredMovies);
     setShowPreloader(false);
   }
 
@@ -51,7 +51,7 @@ function SavedMovies({
   }, []);
 
   React.useEffect(() => {
-    numberOfFilms(movies);
+    // numberOfFilms(movies);
   }, []);
 
   return (
@@ -62,6 +62,7 @@ function SavedMovies({
         onChangeShortFilms={onChangeShortFilms}
         onSubmit={handleSubmit}
         searchData={searchData}
+        isShortFilm={isShortFilm}
       />
       {showPreloader ? (
         <Preloader />

@@ -3,12 +3,15 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import * as mainApi from "../../utils/MainApi";
 
-function MoviesCard({ movieElement, savedMoviesCardList }) {
+function MoviesCard({ movieElement, savedMoviesCardList, filteredMovies }) {
+  
+  const [isLiked, setIsLiked] = React.useState(false);
   const location = useLocation();
   const pathChangeIcon = ["/saved-movies"];
 
   function onAddClick() {
-    mainApi
+    if (!isLiked) {
+      mainApi
       .addMovie({
         movieId: "123",
         country: movieElement.country,
@@ -22,29 +25,51 @@ function MoviesCard({ movieElement, savedMoviesCardList }) {
         nameRU: movieElement.nameRU,
         nameEN: movieElement.nameEN,
       })
-      .then((data) => {
-        console.log(data);
+      .then(() => {
       })
       .catch((err) => console.log(err));
+      setIsLiked(true)
+      localStorage.setItem('likes', true)
+    } else {
+      onDeleteClick()
+      setIsLiked(false)
+    } 
   }
+
+  React.useEffect(() => {
+    if (pathChangeIcon.includes(location.pathname)) {
+      return;
+    } else {
+      const input = document.getElementById('like');
+      const like = localStorage.getItem("likes");
+      if (like) {
+        input.checked = true;
+        setIsLiked(true)
+      } else {
+        input.checked = false;
+        setIsLiked(false)
+      }
+    }
+  }, [isLiked]);
 
   function onDeleteClick() {
     mainApi
       .deleteMovie(movieElement._id)
       .then(() => {
-        // setNumberOfMovies((state) => state.filter((item) => item._id !== movieElement._id))
+        filteredMovies((state) => state.filter((item) => item._id !== movieElement._id))
       })
       .catch((err) => console.log(err));
   }
 
   return (
     <li className="movies-card">
-      <img
+      <a href={`${movieElement.trailerLink}`} target="_blank" rel="noreferrer"><img
         className="movies-card__image"
         alt={movieElement.nameRU}
         src={`${savedMoviesCardList ? `${movieElement.image}` : `https://api.nomoreparties.co/${movieElement.image.url}`
         }`}
       />
+      </a>
       <div className="movies-card__info">
         <h2 className="movies-card__title">{movieElement.nameRU}</h2>
         <label className="movies-card__button">
@@ -58,6 +83,8 @@ function MoviesCard({ movieElement, savedMoviesCardList }) {
             <input
               className="movies-card__button-radio"
               type="checkbox"
+              id="like"
+              name="like"
               onClick={onAddClick}
             />
           )}

@@ -1,11 +1,25 @@
 import "./SearchForm.css";
+import React from "react";
 
 function SearchForm({
   onChangeSearch,
   onChangeShortFilms,
   onSubmit,
   searchData,
+  isShortFilm
 }) {
+
+  React.useEffect(() => {
+    const input = document.getElementById('short-films');
+    // const isShortFilm = localStorage.getItem("shortFilm")
+    console.log(isShortFilm)
+    if (isShortFilm === false) {
+      input.checked = false;
+    } else {
+      input.checked = true;
+    }
+  }, []);
+
   return (
     <form className="search-form" onSubmit={onSubmit}>
       <label className="search-form_switch_search">

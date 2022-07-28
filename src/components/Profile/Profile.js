@@ -8,13 +8,47 @@ function Profile({ onLogout, handleUpdateUser }) {
   const currentUser = React.useContext(CurrentUserContext);
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [isEditable, setIsEditable] = React.useState(false);
+  const [isValidName, setValidityName] = React.useState(false);
+  const [errorName, setErrorName] = React.useState("");
+  const [isValidEmail, setValidityEmail] = React.useState(false);
+  const [errorEmail, setErrorEmail] = React.useState("");
+
+  React.useEffect(() => {
+    const nameInput = document.getElementById("input-name");
+    nameInput.value = currentUser.name;
+    const emailInput = document.getElementById("input-email");
+    emailInput.value = currentUser.email;
+    setName(currentUser.name);
+    setEmail(currentUser.email);
+  }, [currentUser]);
+
+  function letEdit() {
+    document.getElementById("input-name").disabled = false;
+    document.getElementById("input-email").disabled = false;
+    setIsEditable(true);
+  }
 
   function handleNameChange(e) {
     setName(e.target.value);
+    const nameInput = document.getElementById("input-name");
+    setValidityName(nameInput.validity.valid);
+    if (!isValidName) {
+      setErrorName(nameInput.validationMessage);
+    } else {
+      setErrorName("");
+    }
   }
 
   function handleEmailChange(e) {
     setEmail(e.target.value);
+    const emailInput = document.getElementById("input-email");
+    setValidityEmail(emailInput.validity.valid);
+    if (!isValidEmail) {
+      setErrorEmail(emailInput.validationMessage);
+    } else {
+      setErrorEmail("");
+    }
   }
 
   function handleLogout(e) {
@@ -24,10 +58,18 @@ function Profile({ onLogout, handleUpdateUser }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    handleUpdateUser({
-      name: name,
-      email: email,
-    });
+    if (name !== currentUser.name || email !== currentUser.email) {
+      handleUpdateUser({
+        name: name,
+        email: email,
+      });
+      document.getElementById("input-name").disabled = true;
+      document.getElementById("input-email").disabled = true;
+      setIsEditable(false);
+    }
+    document.getElementById("input-name").disabled = true;
+    document.getElementById("input-email").disabled = true;
+    setIsEditable(false);
   }
 
   return (
@@ -44,11 +86,13 @@ function Profile({ onLogout, handleUpdateUser }) {
             type="text"
             id="input-name"
             name="input-name"
-            placeholder={currentUser.name}
+            placeholder="Введите имя"
             required
             minLength={3}
             maxLength={30}
+            disabled
           />
+          <span>{errorName}</span>
         </div>
         <div className="profile__inputs">
           <label className="profile__input-title" htmlFor="input-email">
@@ -60,13 +104,28 @@ function Profile({ onLogout, handleUpdateUser }) {
             type="email"
             id="input-email"
             name="input-email"
-            placeholder={currentUser.email}
+            placeholder="Введите email"
+            disabled
             required
             minLength={3}
             maxLength={30}
           />
+          <span>{errorEmail}</span>
         </div>
-        <button className="profile__button">Редактировать</button>
+        {isEditable ? (
+          <div>
+            <button
+              className="profile__button"
+              disabled={!(isValidName || isValidEmail)}
+            >
+              Сохранить
+            </button>
+          </div>
+        ) : (
+          <p className="profile__button" onClick={letEdit}>
+            Редактировать
+          </p>
+        )}
         <NavLink
           onClick={handleLogout}
           className={"profile__button profile__button_type_signout"}

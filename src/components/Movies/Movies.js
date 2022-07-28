@@ -12,57 +12,107 @@ function Movies({
   numberOfFilms,
   numberOfMovies,
   isShortFilm,
-  addMovies,
+  // addMovies,
+  setIsShortFilm,
 }) {
-  const [movies, setMovies] = React.useState([]);
+  
   const [filteredMovies, setFilteredMovies] = React.useState([]);
   const [showPreloader, setShowPreloader] = React.useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
     setShowPreloader(true);
-    api
-      .getMovies()
-      .then((films) => {
-        setMovies(films);
-        const filteredMovies = films.filter((movie) => {
-          return movie.nameRU.toLowerCase().includes(searchData);
-        });
-        if (isShortFilm) {
-          const durationCheck = filteredMovies.filter((movie) => {
-            return movie.duration < 40;
-          })
-          setFilteredMovies(durationCheck);
-          numberOfFilms(durationCheck);
-          return;
-        }
-        setFilteredMovies(filteredMovies);
-        numberOfFilms(filteredMovies);
-      })
-      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
-      .finally(setShowPreloader(false));
+    const films = JSON.parse(localStorage.getItem("films"));
+    if (films === null) {
+      api
+        .getMovies()
+        .then((movies) => {
+          localStorage.setItem("films", JSON.stringify(movies));
+          filter();
+        })
+        .finally(() => setShowPreloader(false))
+        .catch((err) => console.log(`Ошибка загрузки данных: ${err}`));
+    }
+    filter();
+    setShowPreloader(false);
+  }
+
+  function filter() {
+    const films = JSON.parse(localStorage.getItem("films"));
+    const filteredMovies = films.filter((movie) => {
+      return movie.nameRU.toLowerCase().includes(searchData);
+    });
+    if (isShortFilm) {
+      const durationCheck = filteredMovies.filter((movie) => {
+        return movie.duration < 40;
+      });
+      localStorage.setItem("searchedFilms", JSON.stringify(durationCheck));
+      localStorage.setItem("shortFilm", true);
+      setFilteredMovies(durationCheck);
+      // numberOfFilms(durationCheck);
+      return;
+    }
+    localStorage.setItem("searchedFilms", JSON.stringify(filteredMovies));
+    localStorage.removeItem("shortFilm");
+    setFilteredMovies(filteredMovies);
+    // numberOfFilms(filteredMovies);
   }
 
   React.useEffect(() => {
-    numberOfFilms(filteredMovies);
+    const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
+    setFilteredMovies(searchedFilms)
+    // numberOfFilms(searchedFilms);
   }, []);
 
-  // setTimeout(numberOfFilms, 60)
-  // window.addEventListener('resize', setTimeout)
+  const debounce = (func, wait, immediate) => {
+    var timeout;
+    return () => {
+      const context = this,
+        args = arguments;
+      const later = function () {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      const callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
+
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+
+  const updateWindowWidth = () => {
+    setWindowWidth(window.innerWidth);
+    console.log(windowWidth);
+  }
+
+  React.useEffect(() => {
+    window.addEventListener("resize", updateWindowWidth);
+    return () => window.removeEventListener("resize", updateWindowWidth);
+  });
+
+  // window.addEventListener(
+  //   "resize",
+  //   debounce(() => setFilteredMovies(filteredMovies), 200, false),
+  //   false
+  // );
 
   return (
     <div className="movies">
       <SearchForm
-        movies={movies}
         onChangeSearch={onChangeSearch}
         onChangeShortFilms={onChangeShortFilms}
         onSubmit={handleSubmit}
         searchData={searchData}
+        isShortFilm={isShortFilm}
       />
       {showPreloader ? (
         <Preloader />
       ) : (
-        <MoviesCardList numberOfMovies={numberOfMovies} addMovies={addMovies} />
+        <MoviesCardList numberOfMovies={filteredMovies} 
+        // addMovies={addMovies}
+         />
       )}
     </div>
   );

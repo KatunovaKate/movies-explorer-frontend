@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Switch, useLocation, useHistory } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
+import ProtectedRouteLoggedIn from "../ProtectedRoute/ProtectedRouteLoggedIn";
 import Header from "../Header/Header";
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
@@ -17,6 +18,7 @@ import * as mainApi from "../../utils/MainApi";
 
 function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [wrongEmailOrPassword, setWrongEmailOrPassword] = React.useState(false);
   const [isShortFilm, setIsShortFilm] = React.useState(false);
   const [searchData, setSearchData] = React.useState("");
   const [currentUser, setCurrentUser] = React.useState({});
@@ -49,12 +51,12 @@ function App() {
         localStorage.setItem("jwt", data.token);
         history.push("/movies");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => setWrongEmailOrPassword(true));
   };
 
   const onLogout = () => {
     setLoggedIn(false);
-    localStorage.removeItem("jwt");
+    localStorage.clear();
     history.push("/");
   };
 
@@ -71,8 +73,19 @@ function App() {
         .catch((err) => console.log(err));
     }
   }
+
+  function isShortFilmCheck() {
+    const shortFilm = localStorage.getItem("shortFilm");
+    if (shortFilm === null) {
+      setIsShortFilm(false)
+    } else {
+      setIsShortFilm(true)
+    }
+  }
+
   React.useEffect(() => {
     tokenCheck();
+    isShortFilmCheck();
   }, []);
 
   const onChangeSearch = (e) => {
@@ -83,6 +96,9 @@ function App() {
   const onChangeShortFilms = (e) => {
     setIsShortFilm(!isShortFilm);
   };
+  const [newNumberSmall, setNewNumberSmall] = React.useState(8);
+  const [newNumberMiddle, setNewNumberMiddle] = React.useState(5);
+  const [newNumber, setNewNumber] = React.useState(12);
 
   function numberOfFilms(filteredMovies) {
     if (middleWidth.matches) {
@@ -100,12 +116,37 @@ function App() {
     setNumberOfMovies(numberOfMovies);
   }
 
-  function addMovies() {
-    // if (middleWidth.matches) {
-    //   const newNumber = number + 4;
-    //   return;
-    // }
-  }
+  // function addMovies() {
+  //   const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
+  //   if (middleWidth.matches) {
+  //     setNewNumberMiddle(newNumberMiddle + 2);
+  //     const filteredMovies = searchedFilms.slice(0, newNumberMiddle);
+  //     numberOfFilms(filteredMovies);
+  //     return;
+  //   } else if (smallWidth.matches) {
+  //     setNewNumberSmall(newNumberSmall + 5);
+  //     const filteredMovies = searchedFilms.slice(0, newNumberSmall);
+  //     numberOfFilms(filteredMovies);
+  //     return;
+  //   }
+  //   setNewNumber(newNumber + 4);
+  //   const filteredMovies = searchedFilms.slice(0, newNumber + 4);
+  //   numberOfFilms(filteredMovies);
+  // }
+
+  // function numberOfFilms(filteredMovies) {
+  //   if (middleWidth.matches) {
+  //     const numberOfMovies = filteredMovies.slice(0, newNumberSmall);
+  //     setNumberOfMovies(numberOfMovies);
+  //     return;
+  //   } else if (smallWidth.matches) {
+  //     const numberOfMovies = filteredMovies.slice(0, newNumberMiddle);
+  //     setNumberOfMovies(numberOfMovies);
+  //     return;
+  //   }
+  //   const numberOfMovies = filteredMovies.slice(0, newNumber);
+  //   setNumberOfMovies(numberOfMovies);
+  // }
 
   return (
     <div className="app">
@@ -122,10 +163,11 @@ function App() {
             onChangeSearch={onChangeSearch}
             onChangeShortFilms={onChangeShortFilms}
             searchData={searchData}
-            numberOfFilms={numberOfFilms}
+            // numberOfFilms={numberOfFilms}
             numberOfMovies={numberOfMovies}
             isShortFilm={isShortFilm}
-            addMovies={addMovies}
+            // addMovies={addMovies}
+            setIsShortFilm={setIsShortFilm}
             exact
             path="/movies"
             component={Movies}
@@ -135,9 +177,9 @@ function App() {
             onChangeSearch={onChangeSearch}
             onChangeShortFilms={onChangeShortFilms}
             searchData={searchData}
-            numberOfFilms={numberOfFilms}
+            // numberOfFilms={numberOfFilms}
             numberOfMovies={numberOfMovies}
-            addMovies={addMovies}
+            // addMovies={addMovies}
             isShortFilm={isShortFilm}
             exact
             path="/saved-movies"
@@ -151,12 +193,21 @@ function App() {
             onLogout={onLogout}
             handleUpdateUser={handleUpdateUser}
           />
-          <Route exact path="/signin">
-            <Login onLogin={onLogin} />
-          </Route>
-          <Route exact path="/signup">
-            <Register onLogin={onLogin} />
-          </Route>
+          <ProtectedRouteLoggedIn
+            loggedIn={loggedIn}
+            onLogin={onLogin}
+            wrongEmailOrPassword={wrongEmailOrPassword}
+            exact
+            path="/signin"
+            component={Login}
+          />
+          <ProtectedRouteLoggedIn
+            loggedIn={loggedIn}
+            onLogin={onLogin}
+            exact
+            path="/signup"
+            component={Register}
+          />
           <Route exact path="*">
             <PageNotFound />
           </Route>
