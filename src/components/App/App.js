@@ -47,8 +47,8 @@ function App() {
       .authorize(data)
       .then((data) => {
         console.log(data);
-        setLoggedIn(true);
         localStorage.setItem("jwt", data.token);
+        setLoggedIn(true);
         history.push("/movies");
       })
       .catch((err) => setWrongEmailOrPassword(true));
@@ -84,8 +84,15 @@ function App() {
   }
 
   React.useEffect(() => {
+    if (loggedIn) {
+      tokenCheck();
+    }
+  }, [loggedIn])
+
+  React.useEffect(() => {
     tokenCheck();
     isShortFilmCheck();
+    console.log(localStorage.getItem("searchedFilms"))
   }, []);
 
   const onChangeSearch = (e) => {

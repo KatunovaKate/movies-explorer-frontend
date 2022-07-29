@@ -72,7 +72,7 @@ export const addMovie = (data) => {
       authorization: `Bearer ${localStorage.getItem("jwt")}`,
     },
     body: JSON.stringify(data),
-  }).then((res) => this._checkStatus(res));
+  }).then((res) => checkResponse(res));
 };
 
 export const deleteMovie = (_id) => {
@@ -82,5 +82,5 @@ export const deleteMovie = (_id) => {
       ...headers,
       authorization: `Bearer ${localStorage.getItem("jwt")}`,
     },
-  }).then((res) => this._checkStatus(res));
+  }).then((res) => checkResponse(res));
 };

@@ -3,7 +3,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import * as mainApi from "../../utils/MainApi";
 
-function MoviesCard({ movieElement, savedMoviesCardList, filteredMovies }) {
+function MoviesCard({ movieElement, savedMoviesCardList, numberOfMovies, films, setFilms }) {
   
   const [isLiked, setIsLiked] = React.useState(false);
   const location = useLocation();
@@ -13,7 +13,7 @@ function MoviesCard({ movieElement, savedMoviesCardList, filteredMovies }) {
     if (!isLiked) {
       mainApi
       .addMovie({
-        movieId: "123",
+        movieId: movieElement.id,
         country: movieElement.country,
         director: movieElement.director,
         duration: movieElement.duration,
@@ -26,37 +26,40 @@ function MoviesCard({ movieElement, savedMoviesCardList, filteredMovies }) {
         nameEN: movieElement.nameEN,
       })
       .then(() => {
+        setIsLiked(true);
       })
       .catch((err) => console.log(err));
-      setIsLiked(true)
-      localStorage.setItem('likes', true)
+      
     } else {
-      onDeleteClick()
+      console.log(movieElement)
+      //найти по названию этот же фильм, но на сервере = вытащить оттуда шв = перекинкть в функцию
+      // onDeleteClick()
       setIsLiked(false)
     } 
   }
 
-  React.useEffect(() => {
-    if (pathChangeIcon.includes(location.pathname)) {
-      return;
-    } else {
-      const input = document.getElementById('like');
-      const like = localStorage.getItem("likes");
-      if (like) {
-        input.checked = true;
-        setIsLiked(true)
-      } else {
-        input.checked = false;
-        setIsLiked(false)
-      }
-    }
-  }, [isLiked]);
+  // React.useEffect(() => {
+  //   if (pathChangeIcon.includes(location.pathname)) {
+  //     return;
+  //   } else {
+  //     const input = document.getElementById('like');
+  //     const like = localStorage.getItem("likes");
+  //     if (like) {
+  //       input.checked = true;
+  //       setIsLiked(true)
+  //     } else {
+  //       input.checked = false;
+  //       setIsLiked(false)
+  //     }
+  //   }
+  // }, [isLiked]);
 
   function onDeleteClick() {
     mainApi
       .deleteMovie(movieElement._id)
-      .then(() => {
-        filteredMovies((state) => state.filter((item) => item._id !== movieElement._id))
+      .then((movieElement) => {
+        const newFilms = films.filter((item) => item._id !== movieElement.data._id) 
+        setFilms(newFilms)
       })
       .catch((err) => console.log(err));
   }
