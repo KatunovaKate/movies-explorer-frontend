@@ -4,6 +4,8 @@ import SearchForm from "../SearchForm/SearchForm";
 import Preloader from "../Preloader/Preloader";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import api from "../../utils/MoviesApi";
+import * as mainApi from "../../utils/MainApi";
+import SavedMovies from "../SavedMovies/SavedMovies";
 
 function Movies({
   onChangeSearch,
@@ -12,41 +14,65 @@ function Movies({
   numberOfFilms,
   numberOfMovies,
   isShortFilm,
-  addMovies,
-  setMovies,
-  movies,
+  // addMovies,
+  setIsShortFilm,
 }) {
   const [filteredMovies, setFilteredMovies] = React.useState([]);
+  const [savedMovies, setSavedMovies] = React.useState([]);
   const [showPreloader, setShowPreloader] = React.useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
     setShowPreloader(true);
-    api
-      .getMovies()
-      .then((films) => {
-        setMovies(films);
-        const filteredMovies = films.filter((movie) => {
-          return movie.nameRU.toLowerCase().includes(searchData);
-        });
-        if (isShortFilm) {
-          const durationCheck = filteredMovies.filter((movie) => {
-            return movie.duration < 40;
-          });
-          setFilteredMovies(durationCheck);
-          numberOfFilms(durationCheck);
-          return;
-        }
-        setFilteredMovies(filteredMovies);
-        numberOfFilms(filteredMovies);
-      })
-      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
-      .finally(setShowPreloader(false));
+    const films = JSON.parse(localStorage.getItem("films"));
+    if (films === null) {
+      api
+        .getMovies()
+        .then((movies) => {
+          localStorage.setItem("films", JSON.stringify(movies));
+          filter();
+        })
+        .finally(() => setShowPreloader(false))
+        .catch((err) => console.log(`Ошибка загрузки данных: ${err}`));
+    }
+    filter();
+    setShowPreloader(false);
   }
 
-  // React.useEffect(() => {
-  //   numberOfFilms(filteredMovies);
-  // }, []);
+  function filter() {
+    const films = JSON.parse(localStorage.getItem("films"));
+    const filteredMovies = films.filter((movie) => {
+      return movie.nameRU.toLowerCase().includes(searchData);
+    });
+    if (isShortFilm) {
+      const durationCheck = filteredMovies.filter((movie) => {
+        return movie.duration < 40;
+      });
+      localStorage.setItem("searchedFilms", JSON.stringify(durationCheck));
+      localStorage.setItem("shortFilm", true);
+      setFilteredMovies(durationCheck);
+      // numberOfFilms(durationCheck);
+      return;
+    }
+    localStorage.setItem("searchedFilms", JSON.stringify(filteredMovies));
+    localStorage.removeItem("shortFilm");
+    setFilteredMovies(filteredMovies);
+    // numberOfFilms(filteredMovies);
+  }
+
+  React.useEffect(() => {
+    mainApi
+      .getMovies()
+      .then((savedMovies) => {setSavedMovies(savedMovies)})
+      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
+    console.log(savedMovies)
+  }, []);
+
+  React.useEffect(() => {
+    const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
+    setFilteredMovies(searchedFilms);
+    // numberOfFilms(searchedFilms);
+  }, []);
 
   const debounce = (func, wait, immediate) => {
     var timeout;
@@ -64,25 +90,40 @@ function Movies({
     };
   };
 
-  window.addEventListener(
-    "resize",
-    debounce(() => numberOfFilms(filteredMovies), 200, false),
-    false
-  );
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+
+  const updateWindowWidth = () => {
+    setWindowWidth(window.innerWidth);
+    console.log(windowWidth);
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("resize", updateWindowWidth);
+    return () => window.removeEventListener("resize", updateWindowWidth);
+  });
+
+  // window.addEventListener(
+  //   "resize",
+  //   debounce(() => setFilteredMovies(filteredMovies), 200, false),
+  //   false
+  // );
 
   return (
     <div className="movies">
       <SearchForm
-        movies={movies}
         onChangeSearch={onChangeSearch}
         onChangeShortFilms={onChangeShortFilms}
         onSubmit={handleSubmit}
         searchData={searchData}
+        isShortFilm={isShortFilm}
       />
       {showPreloader ? (
         <Preloader />
       ) : (
-        <MoviesCardList numberOfMovies={numberOfMovies} addMovies={addMovies} />
+        <MoviesCardList
+          numberOfMovies={filteredMovies}
+          // addMovies={addMovies}
+        />
       )}
     </div>
   );
