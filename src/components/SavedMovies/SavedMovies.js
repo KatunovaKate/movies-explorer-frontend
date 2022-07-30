@@ -49,7 +49,14 @@ function SavedMovies({
       })
       .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
       .finally(setShowPreloader(false));
-  }, [films]);
+  }, []);
+
+  const handleDeleteSuccess = (movieElement) => {
+    const newFilms = films.filter((item) => item._id !== movieElement.data._id) 
+    setFilms(newFilms)
+    //!! Вот тут нужно пофильтровать наверно предварительно, решай исходя из своей логике в коде
+    setFilteredMovies(newFilms) 
+  }
 
   return (
     <div className="saved-movies">
@@ -67,9 +74,7 @@ function SavedMovies({
         <MoviesCardList
           numberOfMovies={filteredMovies}
           savedMoviesCardList={savedMoviesCardList}
-          addMovies={addMovies}
-          films={films}
-          setFilms={setFilms}
+          handleDeleteSuccess={handleDeleteSuccess}
         />
       )}
     </div>

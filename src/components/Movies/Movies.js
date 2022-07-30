@@ -4,6 +4,8 @@ import SearchForm from "../SearchForm/SearchForm";
 import Preloader from "../Preloader/Preloader";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import api from "../../utils/MoviesApi";
+import * as mainApi from "../../utils/MainApi";
+import SavedMovies from "../SavedMovies/SavedMovies";
 
 function Movies({
   onChangeSearch,
@@ -15,8 +17,8 @@ function Movies({
   // addMovies,
   setIsShortFilm,
 }) {
-  
   const [filteredMovies, setFilteredMovies] = React.useState([]);
+  const [savedMovies, setSavedMovies] = React.useState([]);
   const [showPreloader, setShowPreloader] = React.useState(false);
 
   function handleSubmit(e) {
@@ -59,8 +61,16 @@ function Movies({
   }
 
   React.useEffect(() => {
+    mainApi
+      .getMovies()
+      .then((savedMovies) => {setSavedMovies(savedMovies)})
+      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
+    console.log(savedMovies)
+  }, []);
+
+  React.useEffect(() => {
     const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
-    setFilteredMovies(searchedFilms)
+    setFilteredMovies(searchedFilms);
     // numberOfFilms(searchedFilms);
   }, []);
 
@@ -85,7 +95,7 @@ function Movies({
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
     console.log(windowWidth);
-  }
+  };
 
   React.useEffect(() => {
     window.addEventListener("resize", updateWindowWidth);
@@ -110,9 +120,10 @@ function Movies({
       {showPreloader ? (
         <Preloader />
       ) : (
-        <MoviesCardList numberOfMovies={filteredMovies} 
-        // addMovies={addMovies}
-         />
+        <MoviesCardList
+          numberOfMovies={filteredMovies}
+          // addMovies={addMovies}
+        />
       )}
     </div>
   );

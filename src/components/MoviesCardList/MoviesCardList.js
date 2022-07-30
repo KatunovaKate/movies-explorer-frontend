@@ -2,7 +2,7 @@ import React from "react";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
 
-function MoviesCardList({ numberOfMovies, savedMoviesCardList, addMovies, films, setFilms }) {
+function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSuccess }) {
   const [length, checkLength] = React.useState(true);
 
   // не работает if --- мб в movies
@@ -34,9 +34,7 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, addMovies, films,
                 key={movie.id}
                 movieElement={movie}
                 savedMoviesCardList={savedMoviesCardList}
-                numberOfMovies={numberOfMovies}
-                films={films}
-                setFilms={setFilms}
+                handleDeleteSuccess={handleDeleteSuccess}
               />
             );
           }) || ""
