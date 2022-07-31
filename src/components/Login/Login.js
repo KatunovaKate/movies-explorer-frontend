@@ -4,15 +4,33 @@ import logo from "../../images/logo.svg";
 
 import "./Login.css";
 
-function Login({ onLogin }) {
+function Login({ onLogin, wrongEmailOrPassword }) {
   const [loginData, setRegisterData] = React.useState({
     email: "",
     password: "",
   });
+  const [isValidEmail, setValidityEmail] = React.useState(false);
+  const [errorEmail, setErrorEmail] = React.useState("");
+  const [isValidPassword, setValidityPassword] = React.useState(false);
+  const [errorPassword, setErrorPassword] = React.useState("");
   const history = useHistory();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const emailInput = document.getElementById("email");
+    setValidityEmail(emailInput.validity.valid);
+    if (!isValidEmail) {
+      setErrorEmail(emailInput.validationMessage);
+    } else {
+      setErrorEmail("");
+    }
+    const namePassword = document.getElementById("password");
+    setValidityPassword(namePassword.validity.valid);
+    if (!isValidPassword) {
+      setErrorPassword(namePassword.validationMessage);
+    } else {
+      setErrorPassword("");
+    }
     setRegisterData({
       ...loginData,
       [name]: value,
@@ -52,9 +70,11 @@ function Login({ onLogin }) {
           placeholder="email@gmail.com"
         />
         <span
-          className="login__input-error signin-email-error"
+          className="login__input-err"
           id="email-error"
-        ></span>
+        >
+          {errorEmail}
+        </span>
         <label className="login__input-label" for="password">
           Пароль
         </label>
@@ -70,10 +90,22 @@ function Login({ onLogin }) {
           placeholder="123456"
         />
         <span
-          className="login__input-error signin-password-error"
+          className="login__input-err"
           id="signin-password-error"
-        ></span>
-        <button className="login__button">Войти</button>
+        >
+          {errorPassword}
+        </span>
+        <button
+          className="login__button"
+          disabled={!(isValidEmail || isValidPassword)}
+        >
+          Войти
+        </button>
+        {wrongEmailOrPassword ? (
+          <p className="login__text login__text_type_error">Неправильные почта или пароль</p>
+        ) : (
+          ""
+        )}
         <p className="login__text">
           Ещё не зарегистрированы?{" "}
           <NavLink className={"login__link-signout"} to={"/signup"}>

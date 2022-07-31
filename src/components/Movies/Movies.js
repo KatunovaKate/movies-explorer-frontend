@@ -5,21 +5,22 @@ import Preloader from "../Preloader/Preloader";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import api from "../../utils/MoviesApi";
 import * as mainApi from "../../utils/MainApi";
-import SavedMovies from "../SavedMovies/SavedMovies";
 
-function Movies({
-  onChangeSearch,
-  onChangeShortFilms,
-  searchData,
-  numberOfFilms,
-  numberOfMovies,
-  isShortFilm,
-  // addMovies,
-  setIsShortFilm,
-}) {
+function Movies({ addMovies, visibleMoviesCount }) {
   const [filteredMovies, setFilteredMovies] = React.useState([]);
   const [savedMovies, setSavedMovies] = React.useState([]);
   const [showPreloader, setShowPreloader] = React.useState(false);
+  const [isShortFilm, setIsShortFilm] = React.useState(false);
+  const [searchData, setSearchData] = React.useState("");
+
+  function isShortFilmCheck() {
+    const shortFilm = localStorage.getItem("shortFilm");
+    if (shortFilm === null) {
+      setIsShortFilm(false);
+    } else {
+      setIsShortFilm(true);
+    }
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -51,78 +52,70 @@ function Movies({
       localStorage.setItem("searchedFilms", JSON.stringify(durationCheck));
       localStorage.setItem("shortFilm", true);
       setFilteredMovies(durationCheck);
-      // numberOfFilms(durationCheck);
       return;
     }
     localStorage.setItem("searchedFilms", JSON.stringify(filteredMovies));
     localStorage.removeItem("shortFilm");
     setFilteredMovies(filteredMovies);
-    // numberOfFilms(filteredMovies);
   }
 
-  React.useEffect(() => {
-    mainApi
-      .getMovies()
-      .then((savedMovies) => {setSavedMovies(savedMovies)})
-      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
-    console.log(savedMovies)
-  }, []);
+  // React.useEffect(() => {
+  //   Promise.all([mainApi.getMovies()])
+  //     .then((savedMovies) => {
+  //       savedMovies[0].data.forEach((film) => {
+  //         setSavedMovies(film.nameRU);
+  //     })
+  //       })
+  //     .catch((err) => console.log(`Ошибка загрузки данных: ${err}`));
+  // }, []);
+
+  // const [isLiked, setIsLiked] = React.useState(false);
+
+  // // React.useEffect(() => {
+  // //   filteredMovies.forEach((film) => {
+  // //     const filter1 = film.nameRU.includes(savedMovies)
+  // //     if (filter1 === true) {
+  // //       setIsLiked(true);
+  // //     } else {
+  // //       setIsLiked(false);
+  // //     }
+  // // })
+  // // }, [savedMovies]);
+
+  const [length, checkLength] = React.useState(true);
 
   React.useEffect(() => {
     const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
     setFilteredMovies(searchedFilms);
-    // numberOfFilms(searchedFilms);
+    isShortFilmCheck();
   }, []);
 
-  const debounce = (func, wait, immediate) => {
-    var timeout;
-    return () => {
-      const context = this,
-        args = arguments;
-      const later = function () {
-        timeout = null;
-        if (!immediate) func.apply(context, args);
-      };
-      const callNow = immediate && !timeout;
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-      if (callNow) func.apply(context, args);
-    };
-  };
-
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-
-  const updateWindowWidth = () => {
-    setWindowWidth(window.innerWidth);
-    console.log(windowWidth);
-  };
-
   React.useEffect(() => {
-    window.addEventListener("resize", updateWindowWidth);
-    return () => window.removeEventListener("resize", updateWindowWidth);
-  });
-
-  // window.addEventListener(
-  //   "resize",
-  //   debounce(() => setFilteredMovies(filteredMovies), 200, false),
-  //   false
-  // );
+    const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
+    if (searchedFilms === null || searchedFilms.length === 0) {
+      checkLength(true);
+    } else {
+      checkLength(false);
+    }
+  }, [filteredMovies]);
 
   return (
     <div className="movies">
       <SearchForm
-        onChangeSearch={onChangeSearch}
-        onChangeShortFilms={onChangeShortFilms}
         onSubmit={handleSubmit}
         searchData={searchData}
         isShortFilm={isShortFilm}
+        setIsShortFilm={setIsShortFilm}
+        setSearchData={setSearchData}
       />
       {showPreloader ? (
         <Preloader />
       ) : (
         <MoviesCardList
           numberOfMovies={filteredMovies}
-          // addMovies={addMovies}
+          addMovies={addMovies}
+          visibleMoviesCount={visibleMoviesCount}
+          length={length}
         />
       )}
     </div>

@@ -9,7 +9,6 @@ function MoviesCard({
   handleDeleteSuccess,
 }) {
   const [isLiked, setIsLiked] = React.useState(false);
-  const [savedFilms, setlikedMovie] = React.useState([]);
   const location = useLocation();
   const pathChangeIcon = ["/saved-movies"];
 
@@ -29,22 +28,8 @@ function MoviesCard({
           nameRU: movieElement.nameRU,
           nameEN: movieElement.nameEN,
         })
-        .then((res) => {
+        .then(() => {
           setIsLiked(true);
-          // setlikedMovie(...savedFilms, res);
-          // console.log(savedFilms)
-          const likedFilms = JSON.parse(localStorage.getItem("liked-films"))
-          Object.values(likedFilms);
-          console.log(typeof likedFilms)
-          console.log(Object.entries(likedFilms))
-          if (likedFilms === null) {
-            localStorage.setItem("liked-films", JSON.stringify(movieElement.nameRU));
-          } else {
-            likedFilms.push(movieElement.nameRU)
-            console.log(likedFilms)
-            localStorage.setItem('liked-films', JSON.stringify(likedFilms));
-          }
-          // setlikedMovie(...movieElement.nameRU);
         })
         .catch((err) => console.log(err));
     } else {
@@ -65,6 +50,15 @@ function MoviesCard({
       setIsLiked(false);
     }
   }
+
+  // const checkIsLiked = () => {
+  //   const input = document.getElementById('like');
+  //   if (isLiked) {
+  //     input.checked = false;
+  //   } else {
+  //     input.checked = true;
+  //   }
+  // };
 
   React.useEffect(() => {
     if (pathChangeIcon.includes(location.pathname)) {

@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Switch, useLocation, useHistory } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
+import ProtectedRouteLoggedIn from "../ProtectedRoute/ProtectedRouteLoggedIn";
 import Header from "../Header/Header";
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
@@ -17,19 +18,13 @@ import * as mainApi from "../../utils/MainApi";
 
 function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [isShortFilm, setIsShortFilm] = React.useState(false);
-  const [searchData, setSearchData] = React.useState("");
+  const [wrongEmailOrPassword, setWrongEmailOrPassword] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
-  const [numberOfMovies, setNumberOfMovies] = React.useState([]);
   const location = useLocation();
   const history = useHistory();
 
   const pathWithHeader = ["/", "/movies", "/saved-movies", "/profile"];
   const pathWithFooter = ["/", "/movies", "/saved-movies"];
-  const middleWidth = window.matchMedia(
-    "(max-width: 989px) and (min-width: 589px)"
-  );
-  const smallWidth = window.matchMedia("(max-width: 589px)");
 
   function handleUpdateUser({ name, email }) {
     mainApi
@@ -44,16 +39,17 @@ function App() {
     mainApi
       .authorize(data)
       .then((data) => {
+        console.log(data);
         setLoggedIn(true);
         localStorage.setItem("jwt", data.token);
         history.push("/movies");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => setWrongEmailOrPassword(true));
   };
 
   const onLogout = () => {
     setLoggedIn(false);
-    localStorage.removeItem("jwt");
+    localStorage.clear();
     history.push("/");
   };
 
@@ -70,52 +66,46 @@ function App() {
         .catch((err) => console.log(err));
     }
   }
+
   React.useEffect(() => {
     tokenCheck();
   }, []);
 
-  const onChangeSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchData(value);
-  };
-
-  const onChangeShortFilms = (e) => {
-    setIsShortFilm(!isShortFilm);
-  };
-
-  const [newNumber, setNewNumber] = React.useState(0);
-  const [movies, setMovies] = React.useState([]);
-
-  function numberOfFilms(filteredMovies) {
-    if (middleWidth.matches) {
-      const number = 8 + newNumber;
-      const numberOfMovies = filteredMovies.slice(0, number);
-      setNumberOfMovies(numberOfMovies);
-      return;
-    } else if (smallWidth.matches) {
-      const numberOfMovies = filteredMovies.slice(0, 5);
-      setNumberOfMovies(numberOfMovies);
-      return;
+  const initialCount = (windowWidth) => {
+    if (windowWidth >= 1280) {
+      return 12;
+    } else if (windowWidth >= 768) {
+      return 8;
     }
-    const numberOfMovies = filteredMovies.slice(0, 12);
-    setNumberOfMovies(numberOfMovies);
-  }
+    return 5;
+  };
+
+  const getLoadStep = (windowWidth) => {
+    if (windowWidth >= 1280) {
+      return 4;
+    } else if (windowWidth >= 768) {
+      return 2;
+    }
+    return 2;
+  };
+
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [visibleMoviesCount, setVisibleMoviesCount] = React.useState(
+    initialCount(windowWidth)
+  );
+
+  const updateWindowWidth = () => {
+    setWindowWidth(window.innerWidth);
+    console.log(windowWidth);
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("resize", updateWindowWidth);
+    return () => window.removeEventListener("resize", updateWindowWidth);
+  });
 
   function addMovies() {
-    if (middleWidth.matches) {
-      setNewNumber(newNumber + 2);
-      const filteredMovies = movies.slice(0, newNumber)
-      numberOfFilms(filteredMovies)
-      return;
-    } else if (smallWidth.matches) {
-      setNewNumber(newNumber + 5);
-      const filteredMovies = movies.slice(0, newNumber)
-      numberOfFilms(filteredMovies)
-      return;
-    }
-      setNewNumber(newNumber + 4);
-      const filteredMovies = movies.slice(0, newNumber)
-      numberOfFilms(filteredMovies)
+    setVisibleMoviesCount((prevCount) => prevCount + getLoadStep(windowWidth));
   }
 
   return (
@@ -130,28 +120,16 @@ function App() {
           </Route>
           <ProtectedRoute
             loggedIn={loggedIn}
-            onChangeSearch={onChangeSearch}
-            onChangeShortFilms={onChangeShortFilms}
-            searchData={searchData}
-            numberOfFilms={numberOfFilms}
-            numberOfMovies={numberOfMovies}
-            isShortFilm={isShortFilm}
             addMovies={addMovies}
-            setMovies={setMovies}
-            movies={movies}
+            visibleMoviesCount={visibleMoviesCount}
             exact
             path="/movies"
             component={Movies}
           />
           <ProtectedRoute
             loggedIn={loggedIn}
-            onChangeSearch={onChangeSearch}
-            onChangeShortFilms={onChangeShortFilms}
-            searchData={searchData}
-            numberOfFilms={numberOfFilms}
-            numberOfMovies={numberOfMovies}
             addMovies={addMovies}
-            isShortFilm={isShortFilm}
+            visibleMoviesCount={visibleMoviesCount}
             exact
             path="/saved-movies"
             component={SavedMovies}
@@ -164,12 +142,21 @@ function App() {
             onLogout={onLogout}
             handleUpdateUser={handleUpdateUser}
           />
-          <Route exact path="/signin">
-            <Login onLogin={onLogin} />
-          </Route>
-          <Route exact path="/signup">
-            <Register onLogin={onLogin} />
-          </Route>
+          <ProtectedRouteLoggedIn
+            loggedIn={loggedIn}
+            onLogin={onLogin}
+            wrongEmailOrPassword={wrongEmailOrPassword}
+            exact
+            path="/signin"
+            component={Login}
+          />
+          <ProtectedRouteLoggedIn
+            loggedIn={loggedIn}
+            onLogin={onLogin}
+            exact
+            path="/signup"
+            component={Register}
+          />
           <Route exact path="*">
             <PageNotFound />
           </Route>

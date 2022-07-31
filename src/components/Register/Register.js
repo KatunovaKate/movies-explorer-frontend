@@ -1,18 +1,46 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import * as auth from '../../utils/MainApi'
+import * as auth from "../../utils/MainApi";
 import logo from "../../images/logo.svg";
 import "./Register.css";
 
-function Register({ onLogin }) {
+function Register({ onLogin, wrongEmailOrPassword }) {
   const [registerData, setRegisterData] = React.useState({
     name: "",
     email: "",
     password: "",
   });
+  const [conflict, setConflict] = React.useState(false);
+  const [isValidName, setValidityName] = React.useState(false);
+  const [errorName, setErrorName] = React.useState("");
+  const [isValidEmail, setValidityEmail] = React.useState(false);
+  const [errorEmail, setErrorEmail] = React.useState("");
+  const [isValidPassword, setValidityPassword] = React.useState(false);
+  const [errorPassword, setErrorPassword] = React.useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const nameInput = document.getElementById("name");
+    setValidityName(nameInput.validity.valid);
+    if (!isValidName) {
+      setErrorName(nameInput.validationMessage);
+    } else {
+      setErrorName("");
+    }
+    const emailInput = document.getElementById("email");
+    setValidityEmail(emailInput.validity.valid);
+    if (!isValidEmail) {
+      setErrorEmail(emailInput.validationMessage);
+    } else {
+      setErrorEmail("");
+    }
+    const namePassword = document.getElementById("password");
+    setValidityPassword(namePassword.validity.valid);
+    if (!isValidPassword) {
+      setErrorPassword(namePassword.validationMessage);
+    } else {
+      setErrorPassword("");
+    }
     setRegisterData({
       ...registerData,
       [name]: value,
@@ -25,10 +53,10 @@ function Register({ onLogin }) {
       .register(registerData)
       .then(() => {
         onLogin(registerData).catch((err) =>
-        console.log(err.message || "Что-то пошло не так")
-      );
+          console.log(err.message || "Что-то пошло не так")
+        );
       })
-      .catch((err) => console.log(err));
+      .catch((err) => setConflict(true));
   }
 
   return (
@@ -54,9 +82,11 @@ function Register({ onLogin }) {
           placeholder="Иван"
         />
         <span
-          className="register__input-error signup-name-error"
+          className="register__input-err"
           id="name-error"
-        ></span>
+        >
+          {errorName}
+        </span>
         <label className="register__input-label" htmlFor="email">
           E-mail
         </label>
@@ -73,9 +103,11 @@ function Register({ onLogin }) {
           placeholder="email@gmail.com"
         />
         <span
-          className="register__input-error signup-email-error"
+          className="register__input-err"
           id="email-error"
-        ></span>
+        >
+          {errorEmail}
+        </span>
         <label className="register__input-label" htmlFor="password">
           Пароль
         </label>
@@ -91,10 +123,22 @@ function Register({ onLogin }) {
           placeholder="123456"
         />
         <span
-          className="register_input-error signup-password-error"
+          className="register__input-err"
           id="signup-password-error"
-        ></span>
-        <button className="register__button">Зарегистрироваться</button>
+        >
+          {errorPassword}
+        </span>
+        <button
+          disabled={!(isValidName || isValidEmail || isValidPassword)}
+          className="register__button"
+        >
+          Зарегистрироваться
+        </button>
+        {conflict ? (
+          <p className="register__text register__text_type_error">Этот е-майл уже зарегистрирован</p>
+        ) : (
+          ""
+        )}
         <p className="register__text">
           Уже зарегистрированы?{" "}
           <NavLink className={"register__link-signout"} to={"/signin"}>

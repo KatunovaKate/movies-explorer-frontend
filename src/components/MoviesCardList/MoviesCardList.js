@@ -2,20 +2,14 @@ import React from "react";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
 
-function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSuccess }) {
-  const [length, checkLength] = React.useState(true);
-
-  // не работает if --- мб в movies
-  React.useEffect(() => {
-    const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
-    if (searchedFilms === null) {
-      checkLength(true);
-      console.log(1)
-    } else {
-      checkLength(false);
-      console.log(2)
-    }
-  }, []);
+function MoviesCardList({
+  numberOfMovies,
+  savedMoviesCardList,
+  handleDeleteSuccess,
+  addMovies,
+  visibleMoviesCount,
+  length,
+}) {
 
   return (
     <section
@@ -26,9 +20,8 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
       <ul className="movies-list__cards">
         {length ? (
           <p>Ничего не найдено</p>
-        ) : 
-        (
-          numberOfMovies.map((movie) => {
+        ) : (
+          numberOfMovies.slice(0, visibleMoviesCount).map((movie) => {
             return (
               <MoviesCard
                 key={movie.id}
@@ -40,20 +33,16 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
           }) || ""
         )}
       </ul>
-      {/* {numberOfMovies.length >= 12
-      // searchedFilms.length 
-      ? (
+      {numberOfMovies === null || numberOfMovies.length <= visibleMoviesCount ? (
         ""
       ) : (
         <button
           onClick={addMovies}
-          className={`movies-list__button ${
-            savedMoviesCardList ? "movies-list__button_disabled" : ""
-          }`}
+          className={`movies-list__button`}
         >
           Ещё
         </button>
-      )} */}
+      )}
     </section>
   );
 }
