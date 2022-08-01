@@ -58,30 +58,7 @@ function Movies({ addMovies, visibleMoviesCount }) {
     localStorage.removeItem("shortFilm");
     setFilteredMovies(filteredMovies);
   }
-
-  // React.useEffect(() => {
-  //   Promise.all([mainApi.getMovies()])
-  //     .then((savedMovies) => {
-  //       savedMovies[0].data.forEach((film) => {
-  //         setSavedMovies(film.nameRU);
-  //     })
-  //       })
-  //     .catch((err) => console.log(`Ошибка загрузки данных: ${err}`));
-  // }, []);
-
-  // const [isLiked, setIsLiked] = React.useState(false);
-
-  // // React.useEffect(() => {
-  // //   filteredMovies.forEach((film) => {
-  // //     const filter1 = film.nameRU.includes(savedMovies)
-  // //     if (filter1 === true) {
-  // //       setIsLiked(true);
-  // //     } else {
-  // //       setIsLiked(false);
-  // //     }
-  // // })
-  // // }, [savedMovies]);
-
+ 
   const [length, checkLength] = React.useState(true);
 
   React.useEffect(() => {

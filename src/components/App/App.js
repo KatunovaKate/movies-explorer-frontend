@@ -39,7 +39,6 @@ function App() {
     mainApi
       .authorize(data)
       .then((data) => {
-        console.log(data);
         setLoggedIn(true);
         localStorage.setItem("jwt", data.token);
         history.push("/movies");
@@ -59,7 +58,6 @@ function App() {
       mainApi
         .getContent(jwt)
         .then((res) => {
-          console.log(res);
           setCurrentUser(res.data);
           setLoggedIn(true);
         })
@@ -96,7 +94,6 @@ function App() {
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
-    console.log(windowWidth);
   };
 
   React.useEffect(() => {
