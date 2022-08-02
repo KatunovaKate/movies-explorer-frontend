@@ -15,12 +15,21 @@ function Login({ onLogin, wrongEmailOrPassword }) {
   const [errorPassword, setErrorPassword] = React.useState("");
   const history = useHistory();
 
+  function isValiEmail(val) {
+    let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!regEmail.test(val)) {
+      setValidityEmail(false);
+    } else {
+      setValidityEmail(true);
+    }
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const emailInput = document.getElementById("email");
-    setValidityEmail(emailInput.validity.valid);
+    isValiEmail(emailInput.value)
     if (!isValidEmail) {
-      setErrorEmail(emailInput.validationMessage);
+      setErrorEmail("Введите корректный email");
     } else {
       setErrorEmail("");
     }
