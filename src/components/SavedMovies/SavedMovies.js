@@ -25,6 +25,7 @@ function SavedMovies({ addMovies, visibleMoviesCount }) {
   function handleSubmit(e) {
     e.preventDefault();
     setShowPreloader(true);
+    localStorage.setItem("save-data", searchData);
     const filteredMovies = films.filter((movie) => {
       return movie.nameRU.toLowerCase().includes(searchData);
     });

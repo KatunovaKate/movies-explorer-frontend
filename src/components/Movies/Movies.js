@@ -4,11 +4,9 @@ import SearchForm from "../SearchForm/SearchForm";
 import Preloader from "../Preloader/Preloader";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import api from "../../utils/MoviesApi";
-import * as mainApi from "../../utils/MainApi";
 
 function Movies({ addMovies, visibleMoviesCount }) {
   const [filteredMovies, setFilteredMovies] = React.useState([]);
-  const [savedMovies, setSavedMovies] = React.useState([]);
   const [showPreloader, setShowPreloader] = React.useState(false);
   const [isShortFilm, setIsShortFilm] = React.useState(false);
   const [searchData, setSearchData] = React.useState("");
@@ -42,6 +40,7 @@ function Movies({ addMovies, visibleMoviesCount }) {
 
   function filter() {
     const films = JSON.parse(localStorage.getItem("films"));
+    localStorage.setItem("data", searchData);
     const filteredMovies = films.filter((movie) => {
       return movie.nameRU.toLowerCase().includes(searchData);
     });

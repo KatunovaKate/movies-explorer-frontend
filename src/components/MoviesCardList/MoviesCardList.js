@@ -10,6 +10,25 @@ function MoviesCardList({
   visibleMoviesCount,
   length,
 }) {
+  
+  const [isLikedMovie, setIsLikedMovie] = React.useState(false);
+
+  React.useEffect(() => {
+    const savedFilms = localStorage.getItem("savedFilms");
+    const films = JSON.parse(localStorage.getItem("films"));
+    if (savedFilms === null || films === null) {
+      return;
+    }
+    films.map((i) => {
+      const likedMovies = JSON.parse(savedFilms).includes(i.nameRU);
+      if (true) {
+        setIsLikedMovie(true);
+      }
+      console.log(likedMovies)
+    });
+    console.log(isLikedMovie)
+    
+  }, []);
 
   return (
     <section
@@ -28,18 +47,18 @@ function MoviesCardList({
                 movieElement={movie}
                 savedMoviesCardList={savedMoviesCardList}
                 handleDeleteSuccess={handleDeleteSuccess}
+                setIsLikedMovie={setIsLikedMovie}
+                isLikedMovie={isLikedMovie}
               />
             );
           }) || ""
         )}
       </ul>
-      {numberOfMovies === null || numberOfMovies.length <= visibleMoviesCount ? (
+      {numberOfMovies === null ||
+      numberOfMovies.length <= visibleMoviesCount ? (
         ""
       ) : (
-        <button
-          onClick={addMovies}
-          className={`movies-list__button`}
-        >
+        <button onClick={addMovies} className={`movies-list__button`}>
           Ещё
         </button>
       )}

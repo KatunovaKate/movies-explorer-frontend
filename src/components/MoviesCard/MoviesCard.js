@@ -7,6 +7,8 @@ function MoviesCard({
   movieElement,
   savedMoviesCardList,
   handleDeleteSuccess,
+  isLikedMovie,
+  setIsLikedMovie
 }) {
   const [isLiked, setIsLiked] = React.useState(false);
   const location = useLocation();
@@ -30,15 +32,15 @@ function MoviesCard({
         })
         .then(() => {
           setIsLiked(true);
-          const likedFilms = JSON.parse(localStorage.getItem("liked-films"))
-          if (likedFilms === null) {
-            localStorage.setItem("liked-films", JSON.stringify(movieElement.nameRU));
-          } else {
-            const likedFilmValues = Object.values(likedFilms);
-            likedFilmValues.push(movieElement.nameRU)
-            console.log(likedFilmValues)
-            localStorage.setItem('liked-films', JSON.stringify(likedFilmValues));
-          }
+          // const likedFilms = JSON.parse(localStorage.getItem("liked-films"))
+          // if (likedFilms === null) {
+          //   localStorage.setItem("liked-films", JSON.stringify(movieElement.nameRU));
+          // } else {
+          //   const likedFilmValues = Object.values(likedFilms);
+          //   likedFilmValues.push(movieElement.nameRU)
+          //   console.log(likedFilmValues)
+          //   localStorage.setItem('liked-films', JSON.stringify(likedFilmValues));
+          // }
         })
         .catch((err) => console.log(err));
     } else {
@@ -69,16 +71,16 @@ function MoviesCard({
   //   }
   // };
 
-  React.useEffect(() => {
-    const likedFilms = localStorage.getItem("liked-films");
-    if (likedFilms === null) {
-      return;
-    }
-    JSON.parse(likedFilms).includes(movieElement.nameRU)
-    if (true) {
-      setIsLiked(true)
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   const likedFilms = localStorage.getItem("liked-films");
+  //   if (likedFilms === null) {
+  //     return;
+  //   }
+  //   JSON.parse(likedFilms).includes(movieElement.nameRU)
+  //   if (true) {
+  //     setIsLikedMovie(true)
+  //   }
+  // }, []);
 
   function onDeleteClick() {
     mainApi
@@ -117,12 +119,13 @@ function MoviesCard({
               type="checkbox"
               id="like"
               name="like"
+              onChange={setIsLiked} 
               onClick={onAddClick}
-              // checked={`${
-              //   isLiked
-              //     ? true
-              //     : false
-              // }`}
+              checked={
+                isLikedMovie
+                  ? true
+                  : false
+              }
             />
           )}
           {pathChangeIcon.includes(location.pathname) ? (

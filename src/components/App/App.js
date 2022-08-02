@@ -35,12 +35,21 @@ function App() {
       .catch((err) => console.log(err));
   }
 
+  function getSavedFilms() {
+    mainApi
+      .getMovies()
+      .then((res) => {
+        localStorage.setItem("savedFilms", JSON.stringify(res.data));
+      })
+      .catch((err) => console.log(err));
+  }
+
   const onLogin = (data) => {
     mainApi
       .authorize(data)
       .then((data) => {
-        setLoggedIn(true);
         localStorage.setItem("jwt", data.token);
+        setLoggedIn(true);
         history.push("/movies");
       })
       .catch((err) => setWrongEmailOrPassword(true));
@@ -66,8 +75,12 @@ function App() {
   }
 
   React.useEffect(() => {
-    tokenCheck();
-  }, []);
+      tokenCheck()
+  }, [loggedIn])
+
+  React.useEffect(() => {
+    getSavedFilms()
+  }, [])
 
   const initialCount = (windowWidth) => {
     if (windowWidth >= 1280) {

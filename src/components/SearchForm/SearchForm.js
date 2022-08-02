@@ -29,14 +29,28 @@ function SearchForm({
   };
 
   React.useEffect(() => {
+    const input = document.getElementById('search');
     if (savedMoviesCardList) {
       const isShortFilm = localStorage.getItem("shortSaveFilm")
       checkIsShort(isShortFilm)
+      const searchDataFilms = localStorage.getItem("save-data")
+      if (searchDataFilms == null) {
+        return;
+      }
+      setSearchData(searchDataFilms)
+      input.value = searchDataFilms;
     } else {
       const isShortFilm = localStorage.getItem("shortFilm")
       checkIsShort(isShortFilm)
+      const searchDataFilms = localStorage.getItem("data")
+      if (searchDataFilms == null) {
+        return;
+      }
+      setSearchData(searchDataFilms)
+      input.value = searchDataFilms;
     }
   }, []);
+
 
   return (
     <form className="search-form" onSubmit={onSubmit}>
@@ -44,6 +58,7 @@ function SearchForm({
         <input
           className="search-form_input"
           type="search"
+          id="search"
           required
           placeholder="Фильм"
           value={searchData || ""}
