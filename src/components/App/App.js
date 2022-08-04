@@ -17,7 +17,7 @@ import "./App.css";
 import * as mainApi from "../../utils/MainApi";
 
 function App() {
-  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(true); //поставил себе логин, потому что регистрация не работала. Самый легкий хак в моей жизни))) если серьезно, стоит подумать, как такого избежать. Токены? Посмотрите в сторону авторизации от Гугл - Firebase auth и кстати еще в сторону Firebase вообще и Database в частности
   const [wrongEmailOrPassword, setWrongEmailOrPassword] = React.useState(false);
   const [isShortFilm, setIsShortFilm] = React.useState(false);
   const [searchData, setSearchData] = React.useState("");

@@ -16,6 +16,7 @@ function SavedMovies({
 }) {
   const [showPreloader, setShowPreloader] = React.useState(false);
   const [filteredMovies, setFilteredMovies] = React.useState([]);
+  const [savedMovies, setSavedMovies] = React.useState([]); //стейт для информации из локалстораджа
   const [films, setFilms] = React.useState([]);
   const savedMoviesCardList = true;
 
@@ -41,13 +42,17 @@ function SavedMovies({
   }
 
   React.useEffect(() => {
+    
+    let ls = JSON.parse( localStorage.getItem('liked-films') ); //парсим лс
+    setSavedMovies(ls); //кладем отпаршенный лс в стейт
+
     setShowPreloader(true);
     Promise.all([mainApi.getMovies()])
       .then((movies) => {
         setFilms(movies[0].data);
         setFilteredMovies(movies[0].data)
       })
-      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
+      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`)) //пользователь консол лог не увидит, ошибка должна быть заметна для юзера
       .finally(setShowPreloader(false));
   }, []);
 
@@ -73,6 +78,7 @@ function SavedMovies({
       ) : (
         <MoviesCardList
           numberOfMovies={filteredMovies}
+          savedMovies={savedMovies} //передаем сохраненные фильмы как пропс
           savedMoviesCardList={savedMoviesCardList}
           handleDeleteSuccess={handleDeleteSuccess}
         />

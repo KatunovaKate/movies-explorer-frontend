@@ -2,7 +2,7 @@ import React from "react";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
 
-function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSuccess }) {
+function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSuccess, savedMovies }) { //добавил массив лайкнутых фильмов как пропс
   const [length, checkLength] = React.useState(true);
 
   // не работает if --- мб в movies
@@ -28,11 +28,23 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
           <p>Ничего не найдено</p>
         ) : 
         (
+          !savedMoviesCardList ? 
           numberOfMovies.map((movie) => {
             return (
               <MoviesCard
                 key={movie.id}
                 movieElement={movie}
+                savedMoviesCardList={savedMoviesCardList}
+                handleDeleteSuccess={handleDeleteSuccess}
+              />
+            );
+          }) || ""
+          : savedMovies?.map((movie) => { //маппим массив сохраненных фильмов
+  
+            return (
+              <MoviesCard
+                key={movie[1].id}
+                movieElement={movie[1]}
                 savedMoviesCardList={savedMoviesCardList}
                 handleDeleteSuccess={handleDeleteSuccess}
               />
