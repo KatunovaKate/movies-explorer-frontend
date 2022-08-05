@@ -120,6 +120,7 @@ function MoviesCard({
               id="like"
               name="like"
               onChange={setIsLiked} 
+
               onClick={onAddClick}
               checked={
                 isLikedMovie

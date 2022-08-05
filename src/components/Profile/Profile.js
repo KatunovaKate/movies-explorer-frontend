@@ -119,6 +119,7 @@ function Profile({ onLogout, handleUpdateUser }) {
             maxLength={30}
             disabled
           />
+          <span>{errorName}</span>
         </div>
         <span className="profile__input-err">{errorName}</span>
         <div className="profile__inputs">
@@ -137,6 +138,7 @@ function Profile({ onLogout, handleUpdateUser }) {
             minLength={3}
             maxLength={30}
           />
+          <span>{errorEmail}</span>
         </div>
         <span className="profile__input-err">{errorEmail}</span>
         {isEditable ? (

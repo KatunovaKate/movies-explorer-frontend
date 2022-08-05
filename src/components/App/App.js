@@ -43,7 +43,7 @@ function App() {
       })
       .catch((err) => console.log(err));
   }
-
+  
   const onLogin = (data) => {
     mainApi
       .authorize(data)
@@ -90,6 +90,9 @@ function App() {
     }
     return 5;
   };
+  const [newNumberSmall, setNewNumberSmall] = React.useState(8);
+  const [newNumberMiddle, setNewNumberMiddle] = React.useState(5);
+  const [newNumber, setNewNumber] = React.useState(12);
 
   const getLoadStep = (windowWidth) => {
     if (windowWidth >= 1280) {

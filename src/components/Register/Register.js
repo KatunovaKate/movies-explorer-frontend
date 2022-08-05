@@ -28,6 +28,7 @@ function Register({ onLogin, wrongEmailOrPassword }) {
     }
   }
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const nameInput = document.getElementById("name");

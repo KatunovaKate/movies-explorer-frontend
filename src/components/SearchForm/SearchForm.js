@@ -51,7 +51,6 @@ function SearchForm({
     }
   }, []);
 
-
   return (
     <form className="search-form" onSubmit={onSubmit}>
       <label className="search-form_switch_search">

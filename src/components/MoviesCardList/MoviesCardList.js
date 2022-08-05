@@ -49,6 +49,7 @@ function MoviesCardList({
                 handleDeleteSuccess={handleDeleteSuccess}
                 setIsLikedMovie={setIsLikedMovie}
                 isLikedMovie={isLikedMovie}
+
               />
             );
           }) || ""
@@ -61,7 +62,7 @@ function MoviesCardList({
         <button onClick={addMovies} className={`movies-list__button`}>
           Ещё
         </button>
-      )}
+      )} */}
     </section>
   );
 }
