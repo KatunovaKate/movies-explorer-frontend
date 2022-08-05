@@ -5,16 +5,21 @@ import MoviesCard from "../MoviesCard/MoviesCard";
 function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSuccess, savedMovies }) { //добавил массив лайкнутых фильмов как пропс
   const [length, checkLength] = React.useState(true);
 
-  // не работает if --- мб в movies
   React.useEffect(() => {
-    const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
-    if (searchedFilms === null) {
-      checkLength(true);
-      console.log(1)
-    } else {
-      checkLength(false);
-      console.log(2)
+    const savedFilms = localStorage.getItem("savedFilms");
+    const films = JSON.parse(localStorage.getItem("films"));
+    if (savedFilms === null || films === null) {
+      return;
     }
+    films.map((i) => {
+      const likedMovies = JSON.parse(savedFilms).includes(i.nameRU);
+      if (true) {
+        setIsLikedMovie(true);
+      }
+      console.log(likedMovies)
+    });
+    console.log(isLikedMovie)
+    
   }, []);
 
   return (
@@ -36,6 +41,9 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
                 movieElement={movie}
                 savedMoviesCardList={savedMoviesCardList}
                 handleDeleteSuccess={handleDeleteSuccess}
+                setIsLikedMovie={setIsLikedMovie}
+                isLikedMovie={isLikedMovie}
+
               />
             );
           }) || ""
@@ -52,17 +60,11 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
           }) || ""
         )}
       </ul>
-      {/* {numberOfMovies.length >= 12
-      // searchedFilms.length 
-      ? (
+      {numberOfMovies === null ||
+      numberOfMovies.length <= visibleMoviesCount ? (
         ""
       ) : (
-        <button
-          onClick={addMovies}
-          className={`movies-list__button ${
-            savedMoviesCardList ? "movies-list__button_disabled" : ""
-          }`}
-        >
+        <button onClick={addMovies} className={`movies-list__button`}>
           Ещё
         </button>
       )} */}

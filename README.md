@@ -1,2 +1,2 @@
 # movies-explorer-frontend
->>>>>>> main
+http://movies-katunova.nomoredomains.xyz/

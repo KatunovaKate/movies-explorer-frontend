@@ -19,19 +19,12 @@ import * as mainApi from "../../utils/MainApi";
 function App() {
   const [loggedIn, setLoggedIn] = React.useState(true); //поставил себе логин, потому что регистрация не работала. Самый легкий хак в моей жизни))) если серьезно, стоит подумать, как такого избежать. Токены? Посмотрите в сторону авторизации от Гугл - Firebase auth и кстати еще в сторону Firebase вообще и Database в частности
   const [wrongEmailOrPassword, setWrongEmailOrPassword] = React.useState(false);
-  const [isShortFilm, setIsShortFilm] = React.useState(false);
-  const [searchData, setSearchData] = React.useState("");
   const [currentUser, setCurrentUser] = React.useState({});
-  const [numberOfMovies, setNumberOfMovies] = React.useState([]);
   const location = useLocation();
   const history = useHistory();
 
   const pathWithHeader = ["/", "/movies", "/saved-movies", "/profile"];
   const pathWithFooter = ["/", "/movies", "/saved-movies"];
-  const middleWidth = window.matchMedia(
-    "(max-width: 989px) and (min-width: 589px)"
-  );
-  const smallWidth = window.matchMedia("(max-width: 589px)");
 
   function handleUpdateUser({ name, email }) {
     mainApi
@@ -42,11 +35,19 @@ function App() {
       .catch((err) => console.log(err));
   }
 
+  function getSavedFilms() {
+    mainApi
+      .getMovies()
+      .then((res) => {
+        localStorage.setItem("savedFilms", JSON.stringify(res.data));
+      })
+      .catch((err) => console.log(err));
+  }
+  
   const onLogin = (data) => {
     mainApi
       .authorize(data)
       .then((data) => {
-        console.log(data);
         localStorage.setItem("jwt", data.token);
         setLoggedIn(true);
         history.push("/movies");
@@ -66,7 +67,6 @@ function App() {
       mainApi
         .getContent(jwt)
         .then((res) => {
-          console.log(res);
           setCurrentUser(res.data);
           setLoggedIn(true);
         })
@@ -74,86 +74,52 @@ function App() {
     }
   }
 
-  function isShortFilmCheck() {
-    const shortFilm = localStorage.getItem("shortFilm");
-    if (shortFilm === null) {
-      setIsShortFilm(false)
-    } else {
-      setIsShortFilm(true)
-    }
-  }
-
   React.useEffect(() => {
-    if (loggedIn) {
-      tokenCheck();
-    }
+      tokenCheck()
   }, [loggedIn])
 
   React.useEffect(() => {
-    tokenCheck();
-    isShortFilmCheck();
-    console.log(localStorage.getItem("searchedFilms"))
-  }, []);
+    getSavedFilms()
+  }, [])
 
-  const onChangeSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchData(value);
-  };
-
-  const onChangeShortFilms = (e) => {
-    setIsShortFilm(!isShortFilm);
+  const initialCount = (windowWidth) => {
+    if (windowWidth >= 1280) {
+      return 12;
+    } else if (windowWidth >= 768) {
+      return 8;
+    }
+    return 5;
   };
   const [newNumberSmall, setNewNumberSmall] = React.useState(8);
   const [newNumberMiddle, setNewNumberMiddle] = React.useState(5);
   const [newNumber, setNewNumber] = React.useState(12);
 
-  function numberOfFilms(filteredMovies) {
-    if (middleWidth.matches) {
-      const number = 8;
-      const numberOfMovies = filteredMovies.slice(0, number);
-      setNumberOfMovies(numberOfMovies);
-      console.log(filteredMovies);
-      return;
-    } else if (smallWidth.matches) {
-      const numberOfMovies = filteredMovies.slice(0, 5);
-      setNumberOfMovies(numberOfMovies);
-      return;
+  const getLoadStep = (windowWidth) => {
+    if (windowWidth >= 1280) {
+      return 4;
+    } else if (windowWidth >= 768) {
+      return 2;
     }
-    const numberOfMovies = filteredMovies.slice(0, 12);
-    setNumberOfMovies(numberOfMovies);
+    return 2;
+  };
+
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [visibleMoviesCount, setVisibleMoviesCount] = React.useState(
+    initialCount(windowWidth)
+  );
+
+  const updateWindowWidth = () => {
+    setWindowWidth(window.innerWidth);
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("resize", updateWindowWidth);
+    return () => window.removeEventListener("resize", updateWindowWidth);
+  });
+
+  function addMovies() {
+    setVisibleMoviesCount((prevCount) => prevCount + getLoadStep(windowWidth));
   }
-
-  // function addMovies() {
-  //   const searchedFilms = JSON.parse(localStorage.getItem("searchedFilms"));
-  //   if (middleWidth.matches) {
-  //     setNewNumberMiddle(newNumberMiddle + 2);
-  //     const filteredMovies = searchedFilms.slice(0, newNumberMiddle);
-  //     numberOfFilms(filteredMovies);
-  //     return;
-  //   } else if (smallWidth.matches) {
-  //     setNewNumberSmall(newNumberSmall + 5);
-  //     const filteredMovies = searchedFilms.slice(0, newNumberSmall);
-  //     numberOfFilms(filteredMovies);
-  //     return;
-  //   }
-  //   setNewNumber(newNumber + 4);
-  //   const filteredMovies = searchedFilms.slice(0, newNumber + 4);
-  //   numberOfFilms(filteredMovies);
-  // }
-
-  // function numberOfFilms(filteredMovies) {
-  //   if (middleWidth.matches) {
-  //     const numberOfMovies = filteredMovies.slice(0, newNumberSmall);
-  //     setNumberOfMovies(numberOfMovies);
-  //     return;
-  //   } else if (smallWidth.matches) {
-  //     const numberOfMovies = filteredMovies.slice(0, newNumberMiddle);
-  //     setNumberOfMovies(numberOfMovies);
-  //     return;
-  //   }
-  //   const numberOfMovies = filteredMovies.slice(0, newNumber);
-  //   setNumberOfMovies(numberOfMovies);
-  // }
 
   return (
     <div className="app">
@@ -167,27 +133,16 @@ function App() {
           </Route>
           <ProtectedRoute
             loggedIn={loggedIn}
-            onChangeSearch={onChangeSearch}
-            onChangeShortFilms={onChangeShortFilms}
-            searchData={searchData}
-            // numberOfFilms={numberOfFilms}
-            numberOfMovies={numberOfMovies}
-            isShortFilm={isShortFilm}
-            // addMovies={addMovies}
-            setIsShortFilm={setIsShortFilm}
+            addMovies={addMovies}
+            visibleMoviesCount={visibleMoviesCount}
             exact
             path="/movies"
             component={Movies}
           />
           <ProtectedRoute
             loggedIn={loggedIn}
-            onChangeSearch={onChangeSearch}
-            onChangeShortFilms={onChangeShortFilms}
-            searchData={searchData}
-            // numberOfFilms={numberOfFilms}
-            numberOfMovies={numberOfMovies}
-            // addMovies={addMovies}
-            isShortFilm={isShortFilm}
+            addMovies={addMovies}
+            visibleMoviesCount={visibleMoviesCount}
             exact
             path="/saved-movies"
             component={SavedMovies}

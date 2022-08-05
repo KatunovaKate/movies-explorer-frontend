@@ -15,12 +15,21 @@ function Login({ onLogin, wrongEmailOrPassword }) {
   const [errorPassword, setErrorPassword] = React.useState("");
   const history = useHistory();
 
+  function isValiEmail(val) {
+    let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!regEmail.test(val)) {
+      setValidityEmail(false);
+    } else {
+      setValidityEmail(true);
+    }
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const emailInput = document.getElementById("email");
-    setValidityEmail(emailInput.validity.valid);
+    isValiEmail(emailInput.value)
     if (!isValidEmail) {
-      setErrorEmail(emailInput.validationMessage);
+      setErrorEmail("Введите корректный email");
     } else {
       setErrorEmail("");
     }
@@ -70,7 +79,7 @@ function Login({ onLogin, wrongEmailOrPassword }) {
           placeholder="email@gmail.com"
         />
         <span
-          className="login__input-error signin-email-error"
+          className="login__input-err"
           id="email-error"
         >
           {errorEmail}
@@ -90,7 +99,7 @@ function Login({ onLogin, wrongEmailOrPassword }) {
           placeholder="123456"
         />
         <span
-          className="login__input-error signin-password-error"
+          className="login__input-err"
           id="signin-password-error"
         >
           {errorPassword}
@@ -102,7 +111,7 @@ function Login({ onLogin, wrongEmailOrPassword }) {
           Войти
         </button>
         {wrongEmailOrPassword ? (
-          <p className="login__text">Неправильные почта или пароль</p>
+          <p className="login__text login__text_type_error">Неправильные почта или пароль</p>
         ) : (
           ""
         )}

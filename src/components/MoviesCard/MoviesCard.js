@@ -7,9 +7,10 @@ function MoviesCard({
   movieElement,
   savedMoviesCardList,
   handleDeleteSuccess,
+  isLikedMovie,
+  setIsLikedMovie
 }) {
   const [isLiked, setIsLiked] = React.useState(false);
-  const [savedFilms, setlikedMovie] = React.useState([]);
   const location = useLocation();
   const pathChangeIcon = ["/saved-movies"];
 
@@ -171,7 +172,14 @@ function MoviesCard({
               type="checkbox"
               id="like"
               name="like"
+              onChange={setIsLiked} 
+
               onClick={onAddClick}
+              checked={
+                isLikedMovie
+                  ? true
+                  : false
+              }
             />
           )}
           {pathChangeIcon.includes(location.pathname) ? (
