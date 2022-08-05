@@ -44,6 +44,8 @@
   display: inline-block;
   width: 16px;
   height: 16px;
+  border: 1px solid black; /* Сделал заметными кнопки лайка. Имхо стоить заменить их на иконки, посмотрите в сторону Font Awesome */
+  border-radius: 10px;
 }
 
 .movies-card__button-radio {

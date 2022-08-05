@@ -2,16 +2,8 @@ import React from "react";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
 
-function MoviesCardList({
-  numberOfMovies,
-  savedMoviesCardList,
-  handleDeleteSuccess,
-  addMovies,
-  visibleMoviesCount,
-  length,
-}) {
-  
-  const [isLikedMovie, setIsLikedMovie] = React.useState(false);
+function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSuccess, savedMovies }) { //добавил массив лайкнутых фильмов как пропс
+  const [length, checkLength] = React.useState(true);
 
   React.useEffect(() => {
     const savedFilms = localStorage.getItem("savedFilms");
@@ -39,8 +31,10 @@ function MoviesCardList({
       <ul className="movies-list__cards">
         {length ? (
           <p>Ничего не найдено</p>
-        ) : (
-          numberOfMovies.slice(0, visibleMoviesCount).map((movie) => {
+        ) : 
+        (
+          !savedMoviesCardList ? 
+          numberOfMovies.map((movie) => {
             return (
               <MoviesCard
                 key={movie.id}
@@ -50,6 +44,17 @@ function MoviesCardList({
                 setIsLikedMovie={setIsLikedMovie}
                 isLikedMovie={isLikedMovie}
 
+              />
+            );
+          }) || ""
+          : savedMovies?.map((movie) => { //маппим массив сохраненных фильмов
+  
+            return (
+              <MoviesCard
+                key={movie[1].id}
+                movieElement={movie[1]}
+                savedMoviesCardList={savedMoviesCardList}
+                handleDeleteSuccess={handleDeleteSuccess}
               />
             );
           }) || ""
