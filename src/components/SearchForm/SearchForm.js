@@ -2,21 +2,52 @@ import "./SearchForm.css";
 import React from "react";
 
 function SearchForm({
-  onChangeSearch,
-  onChangeShortFilms,
   onSubmit,
   searchData,
-  isShortFilm
+  isShortFilm,
+  setIsShortFilm,
+  setSearchData,
+  savedMoviesCardList
 }) {
 
-  React.useEffect(() => {
+  const onChangeSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchData(value);
+  };
+
+  const onChangeShortFilms = (e) => {
+    setIsShortFilm(!isShortFilm);
+  };
+
+  const checkIsShort = (isShortFilm) => {
     const input = document.getElementById('short-films');
-    // const isShortFilm = localStorage.getItem("shortFilm")
-    console.log(isShortFilm)
-    if (isShortFilm === false) {
+    if (isShortFilm === null) {
       input.checked = false;
     } else {
       input.checked = true;
+    }
+  };
+
+  React.useEffect(() => {
+    const input = document.getElementById('search');
+    if (savedMoviesCardList) {
+      const isShortFilm = localStorage.getItem("shortSaveFilm")
+      checkIsShort(isShortFilm)
+      const searchDataFilms = localStorage.getItem("save-data")
+      if (searchDataFilms == null) {
+        return;
+      }
+      setSearchData(searchDataFilms)
+      input.value = searchDataFilms;
+    } else {
+      const isShortFilm = localStorage.getItem("shortFilm")
+      checkIsShort(isShortFilm)
+      const searchDataFilms = localStorage.getItem("data")
+      if (searchDataFilms == null) {
+        return;
+      }
+      setSearchData(searchDataFilms)
+      input.value = searchDataFilms;
     }
   }, []);
 
@@ -26,6 +57,7 @@ function SearchForm({
         <input
           className="search-form_input"
           type="search"
+          id="search"
           required
           placeholder="Фильм"
           value={searchData || ""}

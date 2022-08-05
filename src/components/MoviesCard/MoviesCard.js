@@ -7,9 +7,10 @@ function MoviesCard({
   movieElement,
   savedMoviesCardList,
   handleDeleteSuccess,
+  isLikedMovie,
+  setIsLikedMovie
 }) {
   const [isLiked, setIsLiked] = React.useState(false);
-  const [savedFilms, setlikedMovie] = React.useState([]);
   const location = useLocation();
   const pathChangeIcon = ["/saved-movies"];
 
@@ -29,22 +30,17 @@ function MoviesCard({
           nameRU: movieElement.nameRU,
           nameEN: movieElement.nameEN,
         })
-        .then((res) => {
+        .then(() => {
           setIsLiked(true);
-          // setlikedMovie(...savedFilms, res);
-          // console.log(savedFilms)
-          const likedFilms = JSON.parse(localStorage.getItem("liked-films"))
-          Object.values(likedFilms);
-          console.log(typeof likedFilms)
-          console.log(Object.entries(likedFilms))
-          if (likedFilms === null) {
-            localStorage.setItem("liked-films", JSON.stringify(movieElement.nameRU));
-          } else {
-            likedFilms.push(movieElement.nameRU)
-            console.log(likedFilms)
-            localStorage.setItem('liked-films', JSON.stringify(likedFilms));
-          }
-          // setlikedMovie(...movieElement.nameRU);
+          // const likedFilms = JSON.parse(localStorage.getItem("liked-films"))
+          // if (likedFilms === null) {
+          //   localStorage.setItem("liked-films", JSON.stringify(movieElement.nameRU));
+          // } else {
+          //   const likedFilmValues = Object.values(likedFilms);
+          //   likedFilmValues.push(movieElement.nameRU)
+          //   console.log(likedFilmValues)
+          //   localStorage.setItem('liked-films', JSON.stringify(likedFilmValues));
+          // }
         })
         .catch((err) => console.log(err));
     } else {
@@ -66,15 +62,25 @@ function MoviesCard({
     }
   }
 
-  React.useEffect(() => {
-    if (pathChangeIcon.includes(location.pathname)) {
-      return;
-    } else {
-      // const films = JSON.parse(localStorage.getItem("films"));
-      // console.log(savedFilms)
-      // console.log(films)
-    }
-  }, []);
+  // const checkIsLiked = () => {
+  //   const input = document.getElementById('like');
+  //   if (!isLiked) {
+  //     input.checked = false;
+  //   } else {
+  //     input.checked = true;
+  //   }
+  // };
+
+  // React.useEffect(() => {
+  //   const likedFilms = localStorage.getItem("liked-films");
+  //   if (likedFilms === null) {
+  //     return;
+  //   }
+  //   JSON.parse(likedFilms).includes(movieElement.nameRU)
+  //   if (true) {
+  //     setIsLikedMovie(true)
+  //   }
+  // }, []);
 
   function onDeleteClick() {
     mainApi
@@ -113,7 +119,14 @@ function MoviesCard({
               type="checkbox"
               id="like"
               name="like"
+              onChange={setIsLiked} 
+
               onClick={onAddClick}
+              checked={
+                isLikedMovie
+                  ? true
+                  : false
+              }
             />
           )}
           {pathChangeIcon.includes(location.pathname) ? (

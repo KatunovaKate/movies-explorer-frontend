@@ -54,10 +54,32 @@
   text-align: right;
 }
 
+.profile__save-button {
+  height: 45px;
+  color: white;
+  background-color: #3456f3;
+  text-decoration: none;
+  border: 0;
+  border-radius: 3px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 45px;
+  margin-top: 179px;
+  transition: 0.2s linear;
+  cursor: pointer;
+  min-width: 250px;
+}
+
+.profile__save-button:hover {
+  opacity: 0.8;
+  transition: 0.2s linear;
+}
+
 .profile__button {
   margin-top: 200px;
   font-size: 13px;
   line-height: 16px;
+  text-align: center;
   width: 410px;
   height: 16px;
   background-color: white;
@@ -71,12 +93,74 @@
   transition: 0.2s linear;
 }
 
+.profile__save-button:disabled {
+  background-color: rgb(143, 143, 147);
+}
+
 .profile__button_type_signout {
   margin-top: 16px;
   text-align: center;
   margin-bottom: 70px;
   text-decoration: none;
   color: #ee3465;
+}
+
+.profile__input-err {
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+  color: grey;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  max-width: 410px;
+}
+
+.profile__popup {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+}
+
+.profile__popup-modal {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  border-radius: 5px;
+  width: 200px;
+  height: 150px;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+}
+
+.profile__popup-text {
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.profile__popup_none {
+  display: none;
+}
+
+.profile__close-button {
+  width: 50px;
+  justify-content: center;
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  height: 16px;
+  margin-top: 30px;
+  background-color: white;
+  border: 0;
+  transition: 0.2s linear;
+  cursor: pointer;
 }
 
 @media all and (max-width: 850px) {

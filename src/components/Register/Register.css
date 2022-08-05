@@ -55,9 +55,23 @@
   cursor: pointer;
 }
 
+.register__input-err {
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+  color: grey;
+  margin-bottom: 10px;
+  max-width: 410px;
+}
+
 .register__button:hover {
   opacity: 0.8;
   transition: 0.2s linear;
+}
+
+.register__button:disabled {
+  background-color: #8a9df4;
+  cursor: default;
 }
 
 .register__text {
@@ -67,6 +81,10 @@
   color: #a0a0a0;
   margin-top: 16px;
   margin-bottom: 0;
+}
+
+.register__text_type_error {
+  color:  #05003d;
 }
 
 .register__link-signout {

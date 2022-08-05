@@ -18,6 +18,17 @@ function Register({ onLogin, wrongEmailOrPassword }) {
   const [isValidPassword, setValidityPassword] = React.useState(false);
   const [errorPassword, setErrorPassword] = React.useState("");
 
+
+  function isValiEmail(val) {
+    let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!regEmail.test(val)) {
+      setValidityEmail(false);
+    } else {
+      setValidityEmail(true);
+    }
+  }
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const nameInput = document.getElementById("name");
@@ -28,9 +39,9 @@ function Register({ onLogin, wrongEmailOrPassword }) {
       setErrorName("");
     }
     const emailInput = document.getElementById("email");
-    setValidityEmail(emailInput.validity.valid);
+    isValiEmail(emailInput.value)
     if (!isValidEmail) {
-      setErrorEmail(emailInput.validationMessage);
+      setErrorEmail("Введите корректный email");
     } else {
       setErrorEmail("");
     }
@@ -82,7 +93,7 @@ function Register({ onLogin, wrongEmailOrPassword }) {
           placeholder="Иван"
         />
         <span
-          className="register__input-error signup-name-error"
+          className="register__input-err"
           id="name-error"
         >
           {errorName}
@@ -103,7 +114,7 @@ function Register({ onLogin, wrongEmailOrPassword }) {
           placeholder="email@gmail.com"
         />
         <span
-          className="register__input-error signup-email-error"
+          className="register__input-err"
           id="email-error"
         >
           {errorEmail}
@@ -123,7 +134,7 @@ function Register({ onLogin, wrongEmailOrPassword }) {
           placeholder="123456"
         />
         <span
-          className="register_input-error signup-password-error"
+          className="register__input-err"
           id="signup-password-error"
         >
           {errorPassword}
@@ -135,7 +146,7 @@ function Register({ onLogin, wrongEmailOrPassword }) {
           Зарегистрироваться
         </button>
         {conflict ? (
-          <p className="login__text">Этот е-майл уже зарегистрирован</p>
+          <p className="register__text register__text_type_error">Этот е-майл уже зарегистрирован</p>
         ) : (
           ""
         )}
