@@ -35,14 +35,14 @@ function App() {
       .catch((err) => console.log(err));
   }
 
-  function getSavedFilms() {
-    mainApi
-      .getMovies()
-      .then((res) => {
-        localStorage.setItem("savedFilms", JSON.stringify(res.data));
-      })
-      .catch((err) => console.log(err));
-  }
+  // function getSavedFilms() {
+  //   mainApi
+  //     .getMovies()
+  //     .then((res) => {
+  //       localStorage.setItem("savedFilms", JSON.stringify(res.data));
+  //     })
+  //     .catch((err) => console.log(err));
+  // }
   
   const onLogin = (data) => {
     mainApi
@@ -78,9 +78,9 @@ function App() {
       tokenCheck()
   }, [loggedIn])
 
-  React.useEffect(() => {
-    getSavedFilms()
-  }, [])
+  // React.useEffect(() => {
+  //   getSavedFilms()
+  // }, [])
 
   const initialCount = (windowWidth) => {
     if (windowWidth >= 1280) {
