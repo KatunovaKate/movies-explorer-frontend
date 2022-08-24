@@ -62,13 +62,13 @@ function Movies({ addMovies, visibleMoviesCount }) {
     // numberOfFilms(filteredMovies);
   }
 
-  // React.useEffect(() => {
-  //   mainApi
-  //     .getMovies()
-  //     .then((savedMovies) => {setSavedMovies(savedMovies)})
-  //     .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
-  //   console.log(savedMovies)
-  // }, []);
+  React.useEffect(() => {
+    mainApi
+      .getMovies()
+      .then((savedMovies) => {setSavedMovies(savedMovies)})
+      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
+    console.log(savedMovies)
+  }, []);
 
   function filter() {
     const films = JSON.parse(localStorage.getItem("films"));

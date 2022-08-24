@@ -14,11 +14,11 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
     films.map((i) => {
       const likedMovies = JSON.parse(savedFilms).includes(i.nameRU);
       if (true) {
-        // setIsLikedMovie(true);
+        setIsLikedMovie(true);
       }
       console.log(likedMovies)
     });
-    // console.log(isLikedMovie)
+    console.log(isLikedMovie)
     
   }, []);
 
@@ -41,8 +41,8 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
                 movieElement={movie}
                 savedMoviesCardList={savedMoviesCardList}
                 handleDeleteSuccess={handleDeleteSuccess}
-                // setIsLikedMovie={setIsLikedMovie}
-                // isLikedMovie={isLikedMovie}
+                setIsLikedMovie={setIsLikedMovie}
+                isLikedMovie={isLikedMovie}
 
               />
             );
@@ -60,13 +60,11 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
           }) || ""
         )}
       </ul>
-      {/* {numberOfMovies === null ||
+      {numberOfMovies === null ||
       numberOfMovies.length <= visibleMoviesCount ? (
         ""
       ) : (
-        <button 
-        // onClick={addMovies}
-         className={`movies-list__button`}>
+        <button onClick={addMovies} className={`movies-list__button`}>
           Ещё
         </button>
       )} */}
