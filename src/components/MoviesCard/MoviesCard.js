@@ -14,48 +14,8 @@ function MoviesCard({
   const location = useLocation();
   const pathChangeIcon = ["/saved-movies"];
 
-  const createLikedFilmsLs = () => !localStorage.getItem('liked-films') ? localStorage.setItem('liked-films', '[]') : null; //если в локалсторадже нет массива создаем его
-
-  const findHelper = (ls, movieName) => ls.find(e => e[0] == movieName) ? true : false; //вспомогательная функция ищущая в локалсторадже есть ли там фильм. Вообще все хелперы нужно выносить в отдельный файл и оттуда импортировать. Принцип единой ответственности применяется также и к компонентам Реакта
-
-  const getLs = () => JSON.parse(localStorage.getItem("liked-films")); //получаем локалсторадж
-
-  
-
-
-
-  const removeAddToLs = movieName => { //добавляем или удаляем в локалсторадж фильм
-    let ls = getLs(); 
-    let found = findHelper(ls, movieName);
-    if ( found ) { //если фильм там есть...
-      let filteredLs = ls.filter(e => e[0] !== movieName); //удаляем из массива фильм
-      localStorage.setItem('liked-films', JSON.stringify(filteredLs)); //кладем в локалсторадж
-      setIsLiked(!isLiked); //меняем стейт на противоположный
-    } else { //...а если фильма там нет
-      ls.push([movieName, movieElement]); //пушим его в массив
-      localStorage.setItem('liked-films', JSON.stringify(ls)); //кладем в локалсторадж
-      setIsLiked(!isLiked); //меняем стейт на противоположный
-    }
-  };
-
-
-
-  function onAddClick() { //функция onDeleteClick не нужна, принцип единой ответственности - одна функция удаляет и добавляет
-    createLikedFilmsLs();  //если в локалсторадже нет массива создаем его
-    removeAddToLs(movieElement.nameRU); //добавляем или удаляем в локалсторадж фильм
+  function onAddClick() {
     if (!isLiked) {
-    
-      // const ls = localStorage.getItem('liked-films');
-      // if (!ls) {
-      //   localStorage.setItem('liked-films', '[]');
-      // }
-      // let likedFilms = JSON
-      //   .parse(localStorage.getItem("liked-films"))
-      //   .concat(movieElement.nameRU);    
-      //   localStorage.setItem('liked-films', JSON. stringify(likedFilms));
-
-        console.log(localStorage.getItem('liked-films'));
-        
       mainApi
         .addMovie({
           movieId: movieElement.id,
@@ -70,23 +30,17 @@ function MoviesCard({
           nameRU: movieElement.nameRU,
           nameEN: movieElement.nameEN,
         })
-        .then((res) => {
-          //setIsLiked(true);
-          // setlikedMovie(...savedFilms, res);
-          // console.log(savedFilms)
-
-          
-          // Object.values(likedFilms);
-          // console.log(typeof likedFilms)
-          // console.log(Object.entries(likedFilms))
+        .then(() => {
+          setIsLiked(true);
+          // const likedFilms = JSON.parse(localStorage.getItem("liked-films"))
           // if (likedFilms === null) {
           //   localStorage.setItem("liked-films", JSON.stringify(movieElement.nameRU));
           // } else {
-          //   likedFilms.push(movieElement.nameRU)
-          //   console.log(likedFilms)
-          //   localStorage.setItem('liked-films', JSON.stringify(likedFilms));
+          //   const likedFilmValues = Object.values(likedFilms);
+          //   likedFilmValues.push(movieElement.nameRU)
+          //   console.log(likedFilmValues)
+          //   localStorage.setItem('liked-films', JSON.stringify(likedFilmValues));
           // }
-          // setlikedMovie(...movieElement.nameRU);
         })
         .catch((err) => console.log(err));
     } else {
@@ -104,36 +58,29 @@ function MoviesCard({
             .catch((err) => console.log(err));
         })
         .catch((err) => console.log(`Ошибка загрузки данных: ${err}`));
-      //setIsLiked(false);
+      setIsLiked(false);
     }
   }
 
-  React.useEffect(() => {
-    //ниже псевдокод на подумать на тему того, как можно реализовать запоминание лайкнутого фильма в основной выдаче
-    let ls = getLs();
-    if (ls) {
-      let found = findHelper(ls, movieElement.nameRU);
+  // const checkIsLiked = () => {
+  //   const input = document.getElementById('like');
+  //   if (!isLiked) {
+  //     input.checked = false;
+  //   } else {
+  //     input.checked = true;
+  //   }
+  // };
 
-      console.log(found)
-
-      if ( found ) {
-        setIsLiked(true)
-      } else {
-        setIsLiked(false)
-      }
-
-      if (pathChangeIcon.includes(location.pathname) || found) {
-        setIsLiked(true)
-      } else {
-       setIsLiked(false)
-        // const films = JSON.parse(localStorage.getItem("films"));
-        // console.log(savedFilms)
-        // console.log(films)
-      }
-  }
-
-   
-  }, []);
+  // React.useEffect(() => {
+  //   const likedFilms = localStorage.getItem("liked-films");
+  //   if (likedFilms === null) {
+  //     return;
+  //   }
+  //   JSON.parse(likedFilms).includes(movieElement.nameRU)
+  //   if (true) {
+  //     setIsLikedMovie(true)
+  //   }
+  // }, []);
 
   function onDeleteClick() {
     mainApi
@@ -160,11 +107,11 @@ function MoviesCard({
       <div className="movies-card__info">
         <h2 className="movies-card__title">{movieElement.nameRU}</h2>
         <label className="movies-card__button">
-          {pathChangeIcon.includes(location.pathname) || isLiked ? ( //вебапи не работало, добавил стейт
+          {pathChangeIcon.includes(location.pathname) ? (
             <input
               className="movies-card__button-remove"
               type="button"
-              onClick={onAddClick}
+              onClick={onDeleteClick}
             />
           ) : (
             <input
@@ -173,7 +120,6 @@ function MoviesCard({
               id="like"
               name="like"
               onChange={setIsLiked} 
-
               onClick={onAddClick}
               checked={
                 isLikedMovie
