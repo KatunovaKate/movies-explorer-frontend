@@ -4,6 +4,7 @@ import SearchForm from "../SearchForm/SearchForm";
 import Preloader from "../Preloader/Preloader";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import api from "../../utils/MoviesApi";
+import * as mainApi from "../../utils/MainApi";
 
 function Movies({ addMovies, visibleMoviesCount }) {
   const [filteredMovies, setFilteredMovies] = React.useState([]);
@@ -57,7 +58,7 @@ function Movies({ addMovies, visibleMoviesCount }) {
     localStorage.removeItem("shortFilm");
     setFilteredMovies(filteredMovies);
   }
- 
+
   const [length, checkLength] = React.useState(true);
 
   React.useEffect(() => {

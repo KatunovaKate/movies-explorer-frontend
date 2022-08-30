@@ -80,7 +80,7 @@ function App() {
 
   React.useEffect(() => {
     getSavedFilms()
-  }, [])
+  }, [loggedIn])
 
   const initialCount = (windowWidth) => {
     if (windowWidth >= 1280) {

@@ -8,9 +8,8 @@ function MoviesCard({
   savedMoviesCardList,
   handleDeleteSuccess,
   isLikedMovie,
-  setIsLikedMovie
 }) {
-  const [isLiked, setIsLiked] = React.useState(false);
+  const [isLiked, setIsLiked] = React.useState(isLikedMovie);
   const location = useLocation();
   const pathChangeIcon = ["/saved-movies"];
 
@@ -32,15 +31,6 @@ function MoviesCard({
         })
         .then(() => {
           setIsLiked(true);
-          // const likedFilms = JSON.parse(localStorage.getItem("liked-films"))
-          // if (likedFilms === null) {
-          //   localStorage.setItem("liked-films", JSON.stringify(movieElement.nameRU));
-          // } else {
-          //   const likedFilmValues = Object.values(likedFilms);
-          //   likedFilmValues.push(movieElement.nameRU)
-          //   console.log(likedFilmValues)
-          //   localStorage.setItem('liked-films', JSON.stringify(likedFilmValues));
-          // }
         })
         .catch((err) => console.log(err));
     } else {
@@ -50,43 +40,36 @@ function MoviesCard({
           const newFilms = savedmovies.data.filter(
             (item) => item.nameRU === movieElement.nameRU
           );
+          console.log(newFilms);
           mainApi
             .deleteMovie(newFilms[0]._id)
             .then(() => {
-              console.log("1");
+              console.log("Фильм удален");
+              getSavedFilms()
             })
             .catch((err) => console.log(err));
         })
         .catch((err) => console.log(`Ошибка загрузки данных: ${err}`));
       setIsLiked(false);
     }
+    getSavedFilms()
   }
-
-  // const checkIsLiked = () => {
-  //   const input = document.getElementById('like');
-  //   if (!isLiked) {
-  //     input.checked = false;
-  //   } else {
-  //     input.checked = true;
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   const likedFilms = localStorage.getItem("liked-films");
-  //   if (likedFilms === null) {
-  //     return;
-  //   }
-  //   JSON.parse(likedFilms).includes(movieElement.nameRU)
-  //   if (true) {
-  //     setIsLikedMovie(true)
-  //   }
-  // }, []);
 
   function onDeleteClick() {
     mainApi
       .deleteMovie(movieElement._id)
       .then((movieElement) => {
         handleDeleteSuccess(movieElement);
+        getSavedFilms()
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function getSavedFilms() {
+    mainApi
+      .getMovies()
+      .then((res) => {
+        localStorage.setItem("savedFilms", JSON.stringify(res.data));
       })
       .catch((err) => console.log(err));
   }
@@ -117,15 +100,10 @@ function MoviesCard({
             <input
               className="movies-card__button-radio"
               type="checkbox"
-              id="like"
+              id={`like-${movieElement.id}`}
               name="like"
-              onChange={setIsLiked} 
               onClick={onAddClick}
-              checked={
-                isLikedMovie
-                  ? true
-                  : false
-              }
+              checked={isLiked ? true : false}
             />
           )}
           {pathChangeIcon.includes(location.pathname) ? (

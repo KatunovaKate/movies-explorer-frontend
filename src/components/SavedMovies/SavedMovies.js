@@ -8,7 +8,7 @@ import * as mainApi from "../../utils/MainApi";
 function SavedMovies({ addMovies, visibleMoviesCount }) {
   const [showPreloader, setShowPreloader] = React.useState(false);
   const [filteredMovies, setFilteredMovies] = React.useState([]);
-  const [savedMovies, setSavedMovies] = React.useState([]); //стейт для информации из локалстораджа
+  const [savedMovies, setSavedMovies] = React.useState([]);
   const [films, setFilms] = React.useState([]);
   const savedMoviesCardList = true;
   const [isShortFilm, setIsShortFilm] = React.useState(false);
@@ -48,8 +48,8 @@ function SavedMovies({ addMovies, visibleMoviesCount }) {
 
   React.useEffect(() => {
     
-    let ls = JSON.parse( localStorage.getItem('liked-films') ); //парсим лс
-    setSavedMovies(ls); //кладем отпаршенный лс в стейт
+    let ls = JSON.parse(localStorage.getItem('liked-films') );
+    setSavedMovies(ls);
 
     setShowPreloader(true);
     Promise.all([mainApi.getMovies()])
@@ -58,7 +58,7 @@ function SavedMovies({ addMovies, visibleMoviesCount }) {
         setFilteredMovies(movies[0].data);
         isShortFilmCheck();
       })
-      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`)) //пользователь консол лог не увидит, ошибка должна быть заметна для юзера
+      .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
       .finally(setShowPreloader(false));
   }, []);
 
@@ -78,7 +78,6 @@ function SavedMovies({ addMovies, visibleMoviesCount }) {
   const handleDeleteSuccess = (movieElement) => {
     const newFilms = films.filter((item) => item._id !== movieElement.data._id);
     setFilms(newFilms);
-    //!! Вот тут нужно пофильтровать наверно предварительно, решай исходя из своей логике в коде
     setFilteredMovies(newFilms);
   };
 
