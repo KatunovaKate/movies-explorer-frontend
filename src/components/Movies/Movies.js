@@ -5,11 +5,9 @@ import Preloader from "../Preloader/Preloader";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import api from "../../utils/MoviesApi";
 import * as mainApi from "../../utils/MainApi";
-import SavedMovies from "../SavedMovies/SavedMovies";
 
 function Movies({ addMovies, visibleMoviesCount }) {
   const [filteredMovies, setFilteredMovies] = React.useState([]);
-  const [savedMovies, setSavedMovies] = React.useState([]);
   const [showPreloader, setShowPreloader] = React.useState(false);
   const [isShortFilm, setIsShortFilm] = React.useState(false);
   const [searchData, setSearchData] = React.useState("");
@@ -43,35 +41,6 @@ function Movies({ addMovies, visibleMoviesCount }) {
 
   function filter() {
     const films = JSON.parse(localStorage.getItem("films"));
-    const filteredMovies = films.filter((movie) => {
-      return movie.nameRU.toLowerCase().includes(searchData);
-    });
-    if (isShortFilm) {
-      const durationCheck = filteredMovies.filter((movie) => {
-        return movie.duration < 40;
-      });
-      localStorage.setItem("searchedFilms", JSON.stringify(durationCheck));
-      localStorage.setItem("shortFilm", true);
-      setFilteredMovies(durationCheck);
-      // numberOfFilms(durationCheck);
-      return;
-    }
-    localStorage.setItem("searchedFilms", JSON.stringify(filteredMovies));
-    localStorage.removeItem("shortFilm");
-    setFilteredMovies(filteredMovies);
-    // numberOfFilms(filteredMovies);
-  }
-
-  // React.useEffect(() => {
-  //   mainApi
-  //     .getMovies()
-  //     .then((savedMovies) => {setSavedMovies(savedMovies)})
-  //     .catch((err) => console.log(`Ошибка загрузки данных: ${err}`))
-  //   console.log(savedMovies)
-  // }, []);
-
-  function filter() {
-    const films = JSON.parse(localStorage.getItem("films"));
     localStorage.setItem("data", searchData);
     const filteredMovies = films.filter((movie) => {
       return movie.nameRU.toLowerCase().includes(searchData);
@@ -89,7 +58,7 @@ function Movies({ addMovies, visibleMoviesCount }) {
     localStorage.removeItem("shortFilm");
     setFilteredMovies(filteredMovies);
   }
- 
+
   const [length, checkLength] = React.useState(true);
 
   React.useEffect(() => {

@@ -2,25 +2,30 @@ import React from "react";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
 
-function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSuccess, savedMovies }) { //добавил массив лайкнутых фильмов как пропс
-  const [length, checkLength] = React.useState(true);
+function MoviesCardList({
+  numberOfMovies,
+  savedMoviesCardList,
+  handleDeleteSuccess,
+  addMovies,
+  visibleMoviesCount,
+  length,
+}) {
 
-  React.useEffect(() => {
-    const savedFilms = localStorage.getItem("savedFilms");
-    const films = JSON.parse(localStorage.getItem("films"));
-    if (savedFilms === null || films === null) {
+  function isMovieInSavedArray(movieID) {
+    const savedFilms = JSON.parse(localStorage.getItem("savedFilms"));
+    if (savedFilms === null) {
       return;
     }
-    films.map((i) => {
-      const likedMovies = JSON.parse(savedFilms).includes(i.nameRU);
-      if (true) {
-        // setIsLikedMovie(true);
+    let isLiked;
+    savedFilms.some((film) => {
+      if (movieID === film.movieId) {
+        return isLiked = true;
+      } else {
+        return isLiked = false;
       }
-      console.log(likedMovies)
     });
-    // console.log(isLikedMovie)
-    
-  }, []);
+    return isLiked;
+  }
 
   return (
     <section
@@ -31,45 +36,28 @@ function MoviesCardList({ numberOfMovies, savedMoviesCardList, handleDeleteSucce
       <ul className="movies-list__cards">
         {length ? (
           <p>Ничего не найдено</p>
-        ) : 
-        (
-          !savedMoviesCardList ? 
-          numberOfMovies.map((movie) => {
+        ) : (
+          numberOfMovies.slice(0, visibleMoviesCount).map((movie) => {
             return (
               <MoviesCard
                 key={movie.id}
                 movieElement={movie}
                 savedMoviesCardList={savedMoviesCardList}
                 handleDeleteSuccess={handleDeleteSuccess}
-                // setIsLikedMovie={setIsLikedMovie}
-                // isLikedMovie={isLikedMovie}
-
-              />
-            );
-          }) || ""
-          : savedMovies?.map((movie) => { //маппим массив сохраненных фильмов
-  
-            return (
-              <MoviesCard
-                key={movie[1].id}
-                movieElement={movie[1]}
-                savedMoviesCardList={savedMoviesCardList}
-                handleDeleteSuccess={handleDeleteSuccess}
+                isLikedMovie={isMovieInSavedArray(movie.id)}
               />
             );
           }) || ""
         )}
       </ul>
-      {/* {numberOfMovies === null ||
+      {numberOfMovies === null ||
       numberOfMovies.length <= visibleMoviesCount ? (
         ""
       ) : (
-        <button 
-        // onClick={addMovies}
-         className={`movies-list__button`}>
+        <button onClick={addMovies} className={`movies-list__button`}>
           Ещё
         </button>
-      )} */}
+      )}
     </section>
   );
 }

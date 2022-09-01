@@ -17,7 +17,7 @@ import "./App.css";
 import * as mainApi from "../../utils/MainApi";
 
 function App() {
-  const [loggedIn, setLoggedIn] = React.useState(true); //поставил себе логин, потому что регистрация не работала. Самый легкий хак в моей жизни))) если серьезно, стоит подумать, как такого избежать. Токены? Посмотрите в сторону авторизации от Гугл - Firebase auth и кстати еще в сторону Firebase вообще и Database в частности
+  const [loggedIn, setLoggedIn] = React.useState(false);
   const [wrongEmailOrPassword, setWrongEmailOrPassword] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
   const location = useLocation();
@@ -35,15 +35,15 @@ function App() {
       .catch((err) => console.log(err));
   }
 
-  // function getSavedFilms() {
-  //   mainApi
-  //     .getMovies()
-  //     .then((res) => {
-  //       localStorage.setItem("savedFilms", JSON.stringify(res.data));
-  //     })
-  //     .catch((err) => console.log(err));
-  // }
-  
+  function getSavedFilms() {
+    mainApi
+      .getMovies()
+      .then((res) => {
+        localStorage.setItem("savedFilms", JSON.stringify(res.data));
+      })
+      .catch((err) => console.log(err));
+  }
+
   const onLogin = (data) => {
     mainApi
       .authorize(data)
@@ -78,9 +78,9 @@ function App() {
       tokenCheck()
   }, [loggedIn])
 
-  // React.useEffect(() => {
-  //   getSavedFilms()
-  // }, [])
+  React.useEffect(() => {
+    getSavedFilms()
+  }, [loggedIn])
 
   const initialCount = (windowWidth) => {
     if (windowWidth >= 1280) {
@@ -90,9 +90,6 @@ function App() {
     }
     return 5;
   };
-  const [newNumberSmall, setNewNumberSmall] = React.useState(8);
-  const [newNumberMiddle, setNewNumberMiddle] = React.useState(5);
-  const [newNumber, setNewNumber] = React.useState(12);
 
   const getLoadStep = (windowWidth) => {
     if (windowWidth >= 1280) {

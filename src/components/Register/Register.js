@@ -4,7 +4,7 @@ import * as auth from "../../utils/MainApi";
 import logo from "../../images/logo.svg";
 import "./Register.css";
 
-function Register({ onLogin, wrongEmailOrPassword }) {
+function Register({ onLogin }) {
   const [registerData, setRegisterData] = React.useState({
     name: "",
     email: "",
@@ -140,7 +140,7 @@ function Register({ onLogin, wrongEmailOrPassword }) {
           {errorPassword}
         </span>
         <button
-          disabled={!(isValidName || isValidEmail || isValidPassword)}
+          disabled={!isValidName || !isValidEmail || !isValidPassword}
           className="register__button"
         >
           Зарегистрироваться
