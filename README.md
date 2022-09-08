@@ -1,3 +1,8 @@
-# movies-explorer-frontend
-http://movies-katunova.nomoredomains.xyz/
-https://github.com/KatunovaKate/movies-explorer-frontend/pull/17
+### Movies-explorer-frontend
+
+Многостраничный сайт, представляющий собой поисковик фильмов с регистрацией пользователя.
+
+# Функционал
+Сайт работает с двумя серверами. 
+
+Регистрация, аунтификация, поиск фильмов, сохранение 
